@@ -30,20 +30,20 @@ vector<int> operator + (const vector<int> a, const vector<int> b) {
 }
 
 // stelt de toekenning van een cijfer aan een letter voor
-struct letter {
+struct toekenning {
 	char letter;
 	int cijfer;
 
-	letter(char l, int c) {
+	toekenning(char l, int c) {
 		letter = l;
 		cijfer = c;
 	}
 };
 
 // checkt of een gedeeltelijke toekenning van letters klopt
-bool SoFarSoGood(char *woord2, vector<int> cijfers0, vector<int> cijfers1, vector<letter> letters) {
+bool SoFarSoGood(char *woord2, vector<int> cijfers0, vector<int> cijfers1, vector<toekenning> letters) {
 	vector<int> cijfers2 = cijfers0 + cijfers1;
-	if(cijfers2.size() > max(cijfers0.size(), cijfer1.size()))
+	if(cijfers2.size() > max(cijfers0.size(), cijfers1.size()))
 		cijfers2.erase(cijfers2.begin());
 	int len = strlen(woord2);
 	if(len < cijfers0.size())
@@ -57,9 +57,10 @@ bool SoFarSoGood(char *woord2, vector<int> cijfers0, vector<int> cijfers1, vecto
 				else
 					return false;
 		// letter zat nog niet in letters, voeg hem toe
-		letters.push_back(letter(woord2[i], *c))
-	next:
+		letters.push_back(toekenning(woord2[i], *c));
+	next:;
 	}
+	return true;
 }
 
 //*************************************************************************
