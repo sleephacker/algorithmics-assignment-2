@@ -21,7 +21,7 @@ vector<int> operator + (const vector<int> a, const vector<int> b) {
 
 		int v = av + bv + carry;
 		carry = v >= 10 ? 1 : 0;
-		c.push_back(v % 10);
+		c.insert(c.begin(), v % 10);
 
 		if(i_a != a.rend()) ++i_a;
 		if(i_b != b.rend()) ++i_b;
