@@ -78,7 +78,7 @@ bool lengtes_kloppen(char *woord0, char *woord1, char *woord2) {
 }
 
 
-void voeg_toe_aan_sleutel(string sleutel, char *woord, int index) {
+void voeg_toe_aan_sleutel(string &sleutel, char *woord, int index) {
     if(index >= 0)
 		if(sleutel.find(woord[index]) == string::npos)
 			sleutel.push_back(woord[index]);
@@ -121,6 +121,7 @@ int volgend_getal(int toekenning[26])
 
     // Onmogelijk omdat de woorden maximaal tien verschillende 
     // letters bevatten.
+	cout << "Kan geen volgend getal vinden" << endl;
     throw std::invalid_argument("Kan geen volgend getal vinden");
 }
 
@@ -136,7 +137,7 @@ bool vervang_toegekend(int toekenning[26], string sleutel) {
 
     for(int i = slen - 1; i >= 0; i--) {
          
-        int huidige_toekenning = toekenning[i - 'A'];
+        int huidige_toekenning = toekenning[sleutel[i] - 'A'];
         
         if(huidige_toekenning == -1) continue;
         
@@ -146,16 +147,17 @@ bool vervang_toegekend(int toekenning[26], string sleutel) {
             return false;
         }
         else if(volgende_toekenning < huidige_toekenning) {
-            toekenning[i - 'A'] = -1;
+            toekenning[sleutel[i] - 'A'] = -1;
         }
         else {
-            toekenning[i - 'A'] = volgende_toekenning;
+            toekenning[sleutel[i] - 'A'] = volgende_toekenning;
             return true;
         }
     }
     
     // Bovenstaande loop wordt altijd met een return beëindigd, dus
     // deze regel is onbereikbaar.
+	cout << "Kan toegekende karakters niet updaten" << endl;
     throw std::invalid_argument("Kan toegekende karakters niet updaten");
 }
 
@@ -207,9 +209,9 @@ bool toekenning_is_oplossing(char *woord0, char *woord1, char *woord2, int toeke
 }
 
 int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
-
+	cout << "0" << endl;
     if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
-
+	cout << "1" << endl;
     // Zie implementatie.md
     string sleutel = bepaal_sleutel(woord0, woord1, woord2);
 
@@ -220,11 +222,11 @@ int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
     bool geldig = true;
 
     while(true) {
-    
+		cout << "2" << endl;
         bool gelukt = volgende_toekenning(toekenning, sleutel, geldig);
 
         if(!gelukt) return oplossingen;
-
+		cout << "3" << endl;
         bool is_oplossing = toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig);
 
         if(is_oplossing) oplossingen += 1;

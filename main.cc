@@ -40,6 +40,8 @@ void doepuzzel() {
 	cout << "Woord 2: ";
 	cin >> woord2;
 
+	cout << "De puzzel is: " << woord0 << " + " << woord1 << " = " << woord2 << endl;
+
 	t1 = clock();
 
 	nroplossingen = ls1->zoekoplossingen(woord0, woord1, woord2);
