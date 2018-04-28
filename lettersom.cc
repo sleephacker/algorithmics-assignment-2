@@ -129,7 +129,8 @@ bool toekenning_is_oplossing(char *woord0, char *woord1, char *woord2, int toeke
 
 int zoek_die_shit(char *woord0, char *woord1, char *woord2, int toekenning[26], bool gebruikt[10], string sleutel, int i) {
 	int n = 0;
-	for(int j = 0; j < 10; j++)
+	bool beginletter = sleutel[i] == woord0[0] || sleutel[i] == woord1[0] || sleutel[i] == woord2[0];
+	for(int j = beginletter ? 1 : 0; j < 10; j++)
 		if(!gebruikt[j]) {
 			toekenning[sleutel[i] - 'A'] = j;
 			bool geldig;
