@@ -36,7 +36,7 @@ void doepuzzel() {
 	cout << "Woord 0: ";
 	cin >> woord0;
 	cout << "Woord 1: ";
-	cin >> woord2;
+	cin >> woord1;
 	cout << "Woord 2: ";
 	cin >> woord2;
 
