@@ -30,17 +30,6 @@ vector<int> operator + (const vector<int> a, const vector<int> b) {
 	return c;
 }
 
-/*// stelt de toekenning van een cijfer aan een letter voor
-struct toekenning {
-	char letter;
-	int cijfer;
-
-	toekenning(char l, int c) {
-		letter = l;
-		cijfer = c;
-	}
-};*/
-
 // telt hoeveel letters van achteren kloppen (d.w.z. hoeveel er niet definitief niet kloppen)
 int letters_goed(char *woord2, vector<int> cijfers2, int toekenning[26]) {
 
@@ -89,11 +78,10 @@ bool lengtes_kloppen(char *woord0, char *woord1, char *woord2) {
 }
 
 
-string voeg_toe_aan_sleutel(string sleutel, char *woord, int index) {
-
-    char karakter = woord[index];
-
-    if(index >= 0 && sleutel.find(karakter) == string::npos) sleutel.push_back(karakter);
+void voeg_toe_aan_sleutel(string sleutel, char *woord, int index) {
+    if(index >= 0)
+		if(sleutel.find(woord[index]) == string::npos)
+			sleutel.push_back(woord[index]);
 }
 
 string bepaal_sleutel(char *woord0, char *woord1, char *woord2) {
@@ -123,7 +111,7 @@ int volgend_getal(int toekenning[26])
 
     for(int i = 0; i < 26; i++)
     {
-        if(toekenning[i] != '\0') gebruikt[toekenning[i]] = true;
+        if(toekenning[i] != -1) gebruikt[toekenning[i]] = true;
     }
 
     for(int i = 0; i < 9; i++)
