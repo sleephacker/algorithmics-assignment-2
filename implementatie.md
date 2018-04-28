@@ -6,6 +6,7 @@ Stel we zoeken de oplossingen voor SINT + PIET = FEEST. Allereerst bepalen we in
 
 ### zoekoplossingen
 Input: woord0, woord1, woord2
+
 Output: aantal oplossingen
 
 ```
@@ -24,7 +25,7 @@ zoekoplossingen(woord0, woord1, woord2) {
 	
 		toekenning, klaar = volgende_toekenning(toekenning, geldig)
 		
-        if(klaar) break
+		if(klaar) break
     	
 		geldig, oplossing = bekijk_toekenning(toekenning)
 
