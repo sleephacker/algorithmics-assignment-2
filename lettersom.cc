@@ -120,6 +120,84 @@ string bepaal_sleutel(char *woord0, char *woord1, char *woord2) {
     return sleutel;
 }
 
+int volgend_getal(int toekenning[26])
+{
+    // Alle negen getallen niet gebruikt.
+    bool gebruikt[9] = {false};
+
+    for(int i = 0; i < 26; i++)
+    {
+        if(toekenning[i] != '\0') gebruikt[toekenning[i]] = true;
+    }
+
+    for(int i = 0; i < 9; i++)
+    {
+        if(!gebruikt[i]) return i;
+    }
+
+    // Onmogelijk omdat de woorden maximaal tien verschillende 
+    // letters bevatten.
+    throw std::invalid_argument("Kan geen volgend getal vinden");
+}
+
+// Update een al toegekend karakter. Zo mogelijk krijgt het
+// laatste toegekende karakter een ander getal. Als het laatste karakter
+// alle mogelijke getallen al heeft aangenomen, update dan het één na laatste
+// karakter. Als het eerste karakter alle mogelijke waardes al heeft aangenomen,
+// geef dan false terug.
+bool vervang_toegekend(int toekenning[26], string sleutel) {
+
+    int slen = sleutel.length();
+    int laatste_idx = 0;
+
+    for(int i = slen - 1; i >= 0; i--) {
+         
+        int huidige_toekenning = toekenning[i - 'A'];
+        
+        if(huidige_toekenning == -1) continue;
+        
+        int volgende_toekenning = volgend_getal(toekenning);
+        
+        if(volgende_toekenning < huidige_toekenning && i == 0) {
+            return false;
+        }
+        else if(volgende_toekenning < huidige_toekenning) {
+            toekenning[i - 'A'] = -1;
+        }
+        else {
+            toekenning[i - 'A'] = volgende_toekenning;
+            return true;
+        }
+    }
+    
+    // Bovenstaande loop wordt altijd met een return beëindigd, dus
+    // deze regel is onbereikbaar.
+    throw std::invalid_argument("Kan toegekende karakters niet updaten");
+}
+
+bool volgende_toekenning(int toekenning[26], string sleutel, bool geldig) {
+
+    int slen = sleutel.length();
+
+    if(geldig) {
+
+        // Eerste niet toegekend karakter krijgt een getal
+
+        for(int i = 0; i < slen; i++) {
+            int toekenning_idx = sleutel[i] - 'A';
+
+            if(toekenning[toekenning_idx] == -1) {
+                toekenning[toekenning_idx] = volgend_getal(toekenning);
+                return true; // Volgende toekenning gelukt
+            }
+        }
+
+        // Geen enkel niet toegekend karakter gevonden, probeer een toegekend
+        // karakter te vervangen.
+        return vervang_toegekend(toekenning, sleutel);
+    }
+    else return vervang_toegekend(toekenning, sleutel);
+}
 
 int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
 
@@ -129,21 +207,21 @@ int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
     string sleutel = bepaal_sleutel(woord0, woord1, woord2);
 
     int oplossingen = 0;
-    char toekenning[26] = { '\0' };
+    int toekenning[26];
+    memset(toekenning, -1, 26 * sizeof(int));
+
     bool geldig = true;
 
     while(true) {
     
-        bool klaar = volgende_toekenning(toekenning, geldig);
+        bool gelukt = volgende_toekenning(toekenning, sleutel, geldig);
 
-        if(klaar) break;
+        if(!gelukt) return oplossingen;
 
-        bool is_oplossing = bekijk_toekenning(geldig);
+        bool is_oplossing = toekenning_is_oplossing(toekenning, geldig);
 
         if(is_oplossing) oplossingen += 1;
     }
-
-	return oplossingen;
 }
 
 
