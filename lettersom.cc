@@ -127,22 +127,38 @@ bool toekenning_is_oplossing(char *woord0, char *woord1, char *woord2, int toeke
 	}
 }
 
-int zoek_die_shit(char *woord0, char *woord1, char *woord2, int toekenning[26], bool gebruikt[10], string sleutel, int i) {
+struct zoek_context {
+	char *woord0, *woord1, *woord2;
+	int toekenning[26];
+	bool gebruikt[10];
+	string sleutel;
+
+	zoek_context(char *woord0, char *woord1, char *woord2, int toekenning[26], bool gebruikt[10], string sleutel) {
+		this->woord0 = woord0;
+		this->woord1 = woord1;
+		this->woord2 = woord2;
+		this->sleutel = sleutel;
+		memcpy(this->toekenning, toekenning, 26 * sizeof(int));
+		memcpy(this->gebruikt, gebruikt, 10 * sizeof(bool));
+	}
+};
+
+int zoek_die_shit(zoek_context *z, int i) {
 	int n = 0;
-	bool beginletter = sleutel[i] == woord0[0] || sleutel[i] == woord1[0] || sleutel[i] == woord2[0];
+	bool beginletter = z->sleutel[i] == z->woord0[0] || z->sleutel[i] == z->woord1[0] || z->sleutel[i] == z->woord2[0];
 	for(int j = beginletter ? 1 : 0; j < 10; j++)
-		if(!gebruikt[j]) {
-			toekenning[sleutel[i] - 'A'] = j;
+		if(!z->gebruikt[j]) {
+			z->toekenning[z->sleutel[i] - 'A'] = j;
 			bool geldig;
-			bool biem = toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig);
+			bool biem = toekenning_is_oplossing(z->woord0, z->woord1, z->woord2, z->toekenning, geldig);
 			if(biem)
 				n++;
-			else if(geldig && i < sleutel.length() - 1) {
-				gebruikt[j] = true;
-				n += zoek_die_shit(woord0, woord1, woord2, toekenning, gebruikt, sleutel, i + 1);
-				gebruikt[j] = false;
+			else if(geldig && i < z->sleutel.length() - 1) {
+				z->gebruikt[j] = true;
+				n += zoek_die_shit(z, i + 1);
+				z->gebruikt[j] = false;
 			}
-			toekenning[sleutel[i] - 'A'] = -1;
+			z->toekenning[z->sleutel[i] - 'A'] = -1;
 		}
 	return n;
 }
@@ -155,7 +171,11 @@ int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
 	for(int i = 0; i < 26; i++) toekenning[i] = -1;
 	bool gebruikt[10];
 	for(int i = 0; i < 10; i++) gebruikt[i] = false;
-	return zoek_die_shit(woord0, woord1, woord2, toekenning, gebruikt, sleutel, 0);
+
+	zoek_context *z = new zoek_context(woord0, woord1, woord2, toekenning, gebruikt, sleutel);
+	int n = zoek_die_shit(z, 0);
+	delete z;
+	return n;
 }
 
 
