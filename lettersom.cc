@@ -42,12 +42,16 @@ struct toekenning {
 
 // checkt of een gedeeltelijke toekenning van letters klopt
 bool SoFarSoGood(char *woord2, vector<int> cijfers0, vector<int> cijfers1, vector<toekenning> letters) {
+
 	vector<int> cijfers2 = cijfers0 + cijfers1;
+
 	if(cijfers2.size() > max(cijfers0.size(), cijfers1.size()))
 		cijfers2.erase(cijfers2.begin());
+
 	int len = strlen(woord2);
 	if(len < cijfers0.size())
 		return false;
+
 	int i = len - 1;
 	for(auto c = cijfers2.rbegin(); c != cijfers2.rend(); ++c, i--) {
 		for(auto l = letters.begin(); l != letters.end(); l++)
@@ -63,8 +67,6 @@ bool SoFarSoGood(char *woord2, vector<int> cijfers0, vector<int> cijfers1, vecto
 	return true;
 }
 
-//*************************************************************************
-
 Lettersom::Lettersom() {
 	// TODO: zonodig implementeren
 
@@ -73,20 +75,77 @@ Lettersom::Lettersom() {
 
 }  // Lettersom
 
-//*************************************************************************
+
+bool lengtes_kloppen(char *woord0, char *woord1, char *woord2) {
+    
+    // TODO: hoogstens tien verschillende hoofdletters
+
+    int len0 = strlen(woord0);
+	int len1 = strlen(woord1);
+	int len2 = strlen(woord2);
+
+	if(max(len0, len1) > len2 || max(len0, len1) < (len2 - 1)) return false;
+
+    // Volgens de opdracht: hoogstens 20 karakters
+	if(len0 > 20 || len1 > 20 || len2 > 20) return false;
+    
+    return true;
+}
+
+
+string voeg_toe_aan_sleutel(string sleutel, char *woord, int index) {
+
+    char karakter = woord[index];
+
+    if(index >= 0 && sleutel.find(karakter) == string::npos) sleutel.push_back(karakter);
+}
+
+string bepaal_sleutel(char *woord0, char *woord1, char *woord2) {
+
+    string sleutel;
+    int i0 = strlen(woord0) - 1; // In 'lengtes_kloppen' rekenen we dit ook al uit
+	int i1 = strlen(woord1) - 1; // maar de woorden zijn klein dus maakt dat niet uit.
+	int i2 = strlen(woord2) - 1;
+    
+    while(i0 >= 0 || i1 >= 0 || i2 >= 0) {
+        
+        voeg_toe_aan_sleutel(sleutel, woord0, i0); 
+        voeg_toe_aan_sleutel(sleutel, woord1, i1); 
+        voeg_toe_aan_sleutel(sleutel, woord2, i2); 
+        i0--;
+        i1--;
+        i2--;
+    }
+
+    return sleutel;
+}
+
 
 int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
 
-	int len0 = strlen(woord0);
-	int len1 = strlen(woord1);
-	int len2 = strlen(woord2);
-	if(max(len0, len1) > len2 || max(len0, len1) < (len2 - 1))
-		return 0;
+    if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
 
-	return 0;
-}  // zoekoplossingen
+    // Zie implementatie.md
+    string sleutel = bepaal_sleutel(woord0, woord1, woord2);
 
-//*************************************************************************
+    int oplossingen = 0;
+    char toekenning[26] = { '\0' };
+    bool geldig = true;
+
+    while(true) {
+    
+        bool klaar = volgende_toekenning(toekenning, geldig);
+
+        if(klaar) break;
+
+        bool is_oplossing = bekijk_toekenning(geldig);
+
+        if(is_oplossing) oplossingen += 1;
+    }
+
+	return oplossingen;
+}
+
 
 int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
 	// TODO: implementeren
@@ -98,5 +157,4 @@ int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
 
 }  // construeerpuzzels
 
-//*************************************************************************
 
