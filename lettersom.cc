@@ -61,7 +61,7 @@ Lettersom::Lettersom() {
 }  // Lettersom
 
 
-bool lengtes_kloppen(char *woord0, char *woord1, char *woord2) {
+bool woorden_kloppen(char *woord0, char *woord1, char *woord2) {
     
     // TODO: hoogstens tien verschillende hoofdletters
 
@@ -91,98 +91,17 @@ string bepaal_sleutel(char *woord0, char *woord1, char *woord2) {
 	int i1 = strlen(woord1) - 1; // maar de woorden zijn klein dus maakt dat niet uit.
 	int i2 = strlen(woord2) - 1;
     
-    while(i0 >= 0 || i1 >= 0 || i2 >= 0) {
-        
+    while(i0 >= 0 || i1 >= 0) {
         voeg_toe_aan_sleutel(sleutel, woord0, i0); 
         voeg_toe_aan_sleutel(sleutel, woord1, i1); 
-        voeg_toe_aan_sleutel(sleutel, woord2, i2); 
         i0--;
         i1--;
-        i2--;
     }
-
+	while(i2 >= 0) {
+		voeg_toe_aan_sleutel(sleutel, woord2, i2);
+		i2--;
+	}
     return sleutel;
-}
-
-int volgend_getal(int toekenning[26])
-{
-    // Alle negen getallen niet gebruikt.
-    bool gebruikt[9] = {false};
-
-    for(int i = 0; i < 26; i++)
-    {
-        if(toekenning[i] != -1) gebruikt[toekenning[i]] = true;
-    }
-
-    for(int i = 0; i < 9; i++)
-    {
-        if(!gebruikt[i]) return i;
-    }
-
-    // Onmogelijk omdat de woorden maximaal tien verschillende 
-    // letters bevatten.
-	cout << "Kan geen volgend getal vinden" << endl;
-    throw std::invalid_argument("Kan geen volgend getal vinden");
-}
-
-// Update een al toegekend karakter. Zo mogelijk krijgt het
-// laatste toegekende karakter een ander getal. Als het laatste karakter
-// alle mogelijke getallen al heeft aangenomen, update dan het één na laatste
-// karakter. Als het eerste karakter alle mogelijke waardes al heeft aangenomen,
-// geef dan false terug.
-bool vervang_toegekend(int toekenning[26], string sleutel) {
-
-    int slen = sleutel.length();
-    int laatste_idx = 0;
-
-    for(int i = slen - 1; i >= 0; i--) {
-         
-        int huidige_toekenning = toekenning[sleutel[i] - 'A'];
-        
-        if(huidige_toekenning == -1) continue;
-        
-        int volgende_toekenning = volgend_getal(toekenning);
-        
-        if(volgende_toekenning < huidige_toekenning && i == 0) {
-            return false;
-        }
-        else if(volgende_toekenning < huidige_toekenning) {
-            toekenning[sleutel[i] - 'A'] = -1;
-        }
-        else {
-            toekenning[sleutel[i] - 'A'] = volgende_toekenning;
-            return true;
-        }
-    }
-    
-    // Bovenstaande loop wordt altijd met een return beëindigd, dus
-    // deze regel is onbereikbaar.
-	cout << "Kan toegekende karakters niet updaten" << endl;
-    throw std::invalid_argument("Kan toegekende karakters niet updaten");
-}
-
-bool volgende_toekenning(int toekenning[26], string sleutel, bool geldig) {
-
-    int slen = sleutel.length();
-
-    if(geldig) {
-
-        // Eerste niet toegekend karakter krijgt een getal
-
-        for(int i = 0; i < slen; i++) {
-            int toekenning_idx = sleutel[i] - 'A';
-
-            if(toekenning[toekenning_idx] == -1) {
-                toekenning[toekenning_idx] = volgend_getal(toekenning);
-                return true; // Volgende toekenning gelukt
-            }
-        }
-
-        // Geen enkel niet toegekend karakter gevonden, probeer een toegekend
-        // karakter te vervangen.
-        return vervang_toegekend(toekenning, sleutel);
-    }
-    else return vervang_toegekend(toekenning, sleutel);
 }
 
 // maakt vanaf achteren cijfers van een woord, en stopt bij de eerste letter waar nog geen toekenning voor is
@@ -208,29 +127,34 @@ bool toekenning_is_oplossing(char *woord0, char *woord1, char *woord2, int toeke
 	}
 }
 
+int zoek_die_shit(char *woord0, char *woord1, char *woord2, int toekenning[26], bool gebruikt[10], string sleutel, int i) {
+	int n = 0;
+	for(int j = 0; j < 10; j++)
+		if(!gebruikt[j]) {
+			toekenning[sleutel[i] - 'A'] = j;
+			bool geldig;
+			bool biem = toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig);
+			if(biem)
+				n++;
+			else if(geldig && i < sleutel.length() - 1) {
+				gebruikt[j] = true;
+				n += zoek_die_shit(woord0, woord1, woord2, toekenning, gebruikt, sleutel, i + 1);
+				gebruikt[j] = false;
+			}
+			toekenning[sleutel[i] - 'A'] = -1;
+		}
+	return n;
+}
+
 int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
-	cout << "0" << endl;
-    if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
-	cout << "1" << endl;
-    // Zie implementatie.md
-    string sleutel = bepaal_sleutel(woord0, woord1, woord2);
+	if(!woorden_kloppen(woord0, woord1, woord2)) return 0;
 
-    int oplossingen = 0;
-    int toekenning[26];
-    memset(toekenning, -1, 26 * sizeof(int));
-
-    bool geldig = true;
-
-    while(true) {
-		cout << "2" << endl;
-        bool gelukt = volgende_toekenning(toekenning, sleutel, geldig);
-
-        if(!gelukt) return oplossingen;
-		cout << "3" << endl;
-        bool is_oplossing = toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig);
-
-        if(is_oplossing) oplossingen += 1;
-    }
+	string sleutel = bepaal_sleutel(woord0, woord1, woord2);
+	int toekenning[26];
+	for(int i = 0; i < 26; i++) toekenning[i] = -1;
+	bool gebruikt[10];
+	for(int i = 0; i < 10; i++) gebruikt[i] = false;
+	return zoek_die_shit(woord0, woord1, woord2, toekenning, gebruikt, sleutel, 0);
 }
 
 
