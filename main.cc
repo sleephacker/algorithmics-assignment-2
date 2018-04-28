@@ -23,6 +23,9 @@ void doepuzzel() {
 	Lettersom *ls1;  // pointer, om makkeijk nieuwe objecten te kunnen maken
 					// en weer weg te gooien
 	char woord0[maxwoordlengte + 1], woord1[maxwoordlengte + 1], woord2[maxwoordlengte + 1];
+	memset(woord0, 0, (maxwoordlengte + 1) * sizeof(char));
+	memset(woord1, 0, (maxwoordlengte + 1) * sizeof(char));
+	memset(woord2, 0, (maxwoordlengte + 1) * sizeof(char));
 	clock_t t1, t2;
 	int nroplossingen;
 
