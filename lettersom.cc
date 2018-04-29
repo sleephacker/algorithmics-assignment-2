@@ -78,13 +78,13 @@ bool lengtes_kloppen(char *woord0, char *woord1, char *woord2) {
 }
 
 
-void voeg_toe_aan_sleutel(string &sleutel, char *woord, int index) {
+void voeg_toe_aan_sleutel(string &sleutel, char const *woord, int index) {
     if(index >= 0)
 		if(sleutel.find(woord[index]) == string::npos)
 			sleutel.push_back(woord[index]);
 }
 
-string bepaal_sleutel(char *woord0, char *woord1, char *woord2) {
+string bepaal_sleutel(char const *woord0, char const *woord1, char const *woord2) {
 
     string sleutel;
     int i0 = strlen(woord0) - 1; // In 'lengtes_kloppen' rekenen we dit ook al uit
@@ -104,8 +104,8 @@ string bepaal_sleutel(char *woord0, char *woord1, char *woord2) {
     return sleutel;
 }
 
-int volgend_getal(int toekenning[26])
-{
+int volgend_getal(int toekenning[26], int hoger_dan) {
+
     // Alle negen getallen niet gebruikt.
     bool gebruikt[9] = {false};
 
@@ -114,15 +114,12 @@ int volgend_getal(int toekenning[26])
         if(toekenning[i] != -1) gebruikt[toekenning[i]] = true;
     }
 
-    for(int i = 0; i < 9; i++)
+    for(int i = hoger_dan + 1; i < 9; i++)
     {
         if(!gebruikt[i]) return i;
     }
 
-    // Onmogelijk omdat de woorden maximaal tien verschillende 
-    // letters bevatten.
-	cout << "Kan geen volgend getal vinden" << endl;
-    throw std::invalid_argument("Kan geen volgend getal vinden");
+    return -1; // Niet gevonden
 }
 
 // Update een al toegekend karakter. Zo mogelijk krijgt het
@@ -141,12 +138,12 @@ bool vervang_toegekend(int toekenning[26], string sleutel) {
         
         if(huidige_toekenning == -1) continue;
         
-        int volgende_toekenning = volgend_getal(toekenning);
+        int volgende_toekenning = volgend_getal(toekenning, huidige_toekenning);
         
-        if(volgende_toekenning < huidige_toekenning && i == 0) {
+        if(volgende_toekenning == -1 && i == 0) {
             return false;
         }
-        else if(volgende_toekenning < huidige_toekenning) {
+        else if(volgende_toekenning == -1) {
             toekenning[sleutel[i] - 'A'] = -1;
         }
         else {
@@ -173,7 +170,7 @@ bool volgende_toekenning(int toekenning[26], string sleutel, bool geldig) {
             int toekenning_idx = sleutel[i] - 'A';
 
             if(toekenning[toekenning_idx] == -1) {
-                toekenning[toekenning_idx] = volgend_getal(toekenning);
+                toekenning[toekenning_idx] = volgend_getal(toekenning, -1);
                 return true; // Volgende toekenning gelukt
             }
         }
