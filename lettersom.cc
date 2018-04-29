@@ -206,10 +206,27 @@ bool toekenning_is_oplossing(char *woord0, char *woord1, char *woord2, int toeke
 	}
 }
 
+int woord_naar_getal(char const* woord, int toekenning[26]) {
+
+    int getal = 0;
+    int len = strlen(woord);
+
+    for(int i = 0; i < len; i++) {
+
+        int t = toekenning[woord[i] - 'A'];
+        if(t == -1) return getal;
+
+        getal *= 10;
+        getal += t;
+    }
+
+    return getal;
+}
+
 int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
-	cout << "0" << endl;
+
     if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
-	cout << "1" << endl;
+
     // Zie implementatie.md
     string sleutel = bepaal_sleutel(woord0, woord1, woord2);
 
@@ -220,26 +237,137 @@ int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
     bool geldig = true;
 
     while(true) {
-		cout << "2" << endl;
         bool gelukt = volgende_toekenning(toekenning, sleutel, geldig);
 
         if(!gelukt) return oplossingen;
-		cout << "3" << endl;
+
         bool is_oplossing = toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig);
 
         if(is_oplossing) oplossingen += 1;
     }
 }
 
+void bepaal_beschikbare_karakters(
+        bool karakter_beschikbaar[26],
+        bool vrij_karakter[26],
+        char const *woord0,
+        char const *woord1,
+        int min,
+        int max) {
+
+    // Unieke karakters
+    string sleutel = bepaal_sleutel(woord0, woord1, "");
+    
+    // Er zijn maximaal 10 verschillende karakters nodig. Een deel
+    // van deze karakters wordt al bepaald door de karakters in woord0, woord1.
+    // De rest kunnen we vrij kiezen, deze kiezen we simpelweg als de eerste
+    // karakters in het alfabet die nog vrij zijn.
+    int vrije_karakters = 10 - sleutel.length();
+
+    // Bepaal welke karakters gebruikt worden voor het derde woord.
+    for(int i = 0; i < 26; i++) {
+
+        if(sleutel.find(i + 'A') != string::npos) karakter_beschikbaar[i] = true;
+        else if(vrij_karakter > 0) {
+            karakter_beschikbaar[i] = true;
+            vrij_karakter [i] = true;
+            vrije_karakters -= 1;
+        }
+    }
+}
+
+// Na afloop is volgende gevuld op zo'n manier dat, om te weten te komen
+// welk beschikbare karakter na het beschikbare karakter 'C' komt, 'volgende'
+// geindexeerd kan worden volgende['C' - 'A']. 
+// Het beschikbare karakter na 'C' is dan dus volgende['C' - 'A'] + 'A'.
+// karakter_beschikbaar geeft aan welke karakters in het alfabet beschikbaar zijn.
+void construeer_volgende_tabel(bool karakter_beschikbaar[26], int volgende[26], int &eerste_kar) {
+
+    for(eerste_kar = 0; !karakter_beschikbaar[eerste_kar]; eerste_kar++);
+    
+    int vorige = eerste_kar;
+
+    for(int i = 25; i >= 0; i--) {
+
+        if(karakter_beschikbaar[i]) {
+            volgende[i] = vorige;
+            vorige = i;
+        }
+    }
+}
+
+// Geef terug of er een volgend woord is gevonden, of dat dit niet
+// is gelukt.
+bool volgend_woord(char *derde_woord, int volgende[26], int max) {
+
+    char volgend_kar = volgende[derde_woord[0] - 'A'] + 'A';
+    derde_woord[0] = volgend_kar;
+
+    if(volgend_kar > derde_woord[0]) return true;
+    else if(volgend_kar < derde_woord[0] && max == 1) return false;
+    else return volgend_woord(derde_woord + 1, volgende, max - 1);
+}
+
+// Bepaal of de vrije karakters in een oplopende volgorde staan.
+bool vrije_karakters_goede_volgorde(char *derde_woord,  bool vrij_karakter[26]) {
+
+    int vorige = -1;
+
+    for(int i = 0; i < 26; i++) {
+        if(vrij_karakter[i]) {
+
+            if(vorige != -1 && vorige > i) return false;
+            
+            vorige = i;
+        }
+    }
+
+    return true;
+}
 
 int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
-	// TODO: implementeren
 
-	cout << endl;
-	cout << "De methode construeerpuzzels is nog niet ge-implementeerd." << endl;
+    // Minimale groote van het derde woord
+    int min = max(strlen(woord0), strlen(woord1));
+    // Maximale grootte
+    int max = min + 1;
 
-	return 0;
+    bool karakter_beschikbaar[26] = { false };
 
-}  // construeerpuzzels
+    // De karakters die worden toegevoegd aan het spel.
+    // Deze staan niet in woord0 en woord1.
+    bool vrij_karakter[26] = { false };
+
+    bepaal_beschikbare_karakters(karakter_beschikbaar,
+            vrij_karakter, woord0, woord1, min, max);
+
+    int volgende[26];
+    int eerste_kar;
+    construeer_volgende_tabel(karakter_beschikbaar, volgende, eerste_kar);
+
+    char derde_woord[max + 1] = { '\0' };
+    memset(derde_woord, eerste_kar, min);
+
+    // We gaan nu alle mogelijke derde woorden genereren
+    // met de beschikbare karakters.
+    // Stel de beschikbare karakters zijn 'a', 'k', 'g' en dat
+    // het woord tussen 3 en 4 karakters lang moet zijn, dan gaat dit als volgt:
+    // aaa - kaa - gaa - aka - kka - gka - aga - .....
+    // Er wordt als het ware geteld, waarbij er niet rechts maar juist links
+    // telkens het volgende karakter wordt genomen.
+
+    int oplossingen = 0;
+
+    do {
+        // Wordt alleen als een oplossing gezien als de vrije karakters
+        // in een oplopende volgorde staan. Zie 'Het is de bedoeling dat...'
+        // in de opdracht.
+        if(!vrije_karakters_goede_volgorde(derde_woord, vrij_karakter)) continue;
+
+        if(zoekoplossingen(woord0, woord1, derde_woord) == 1) oplossingen++;
+    } while(volgend_woord(derde_woord, volgende, max));
+    
+    return oplossingen;
+}
 
 

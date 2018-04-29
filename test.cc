@@ -51,20 +51,62 @@ void volgende_toekenning_test() {
     toekenning['S' - 'A'] = 5;
     toekenning['U' - 'A'] = 9;
     
-    print_toekenning(toekenning, sleutel);
+    //print_toekenning(toekenning, sleutel);
     volgende_toekenning(toekenning, sleutel, true);
-    print_toekenning(toekenning, sleutel);
+    //print_toekenning(toekenning, sleutel);
 
     for(int i = 0; i < 6; i++) {
         volgende_toekenning(toekenning, sleutel, false);
-        print_toekenning(toekenning, sleutel);
+        //print_toekenning(toekenning, sleutel);
     }
 }
 
+void bepaal_beschikbare_karakters_test() {
+
+    // Beschikbaar
+    bool kb[26] = { false };
+    bool vk[26] = { false };
+
+    bepaal_beschikbare_karakters(kb, vk,"AKRF", "BCC", 4, 5);
+
+    assert(kb['A' - 'A']);
+    assert(kb['B' - 'A']);
+    assert(kb['C' - 'A']);
+
+    // Vier vrije karakters
+    assert(kb['D' - 'A']);
+    assert(kb['E' - 'A']);
+    assert(kb['F' - 'A']);
+    assert(kb['G' - 'A']);
+
+    assert(kb['K' - 'A']);
+    assert(kb['R' - 'A']);
+    assert(kb['F' - 'A']);
+}
+
+void construeer_volgende_tabel_test() {
+
+    bool karakter_beschikbaar[26] = { false };
+    int volgende[26];
+
+    karakter_beschikbaar['D' - 'A'] = true;
+    karakter_beschikbaar['K' - 'A'] = true;
+
+    int eerste_kar;
+
+    construeer_volgende_tabel(karakter_beschikbaar, volgende, eerste_kar);
+    
+    assert(eerste_kar == 'D' - 'A');
+    assert(volgende['K' - 'A'] == 'D' - 'A');
+    assert(volgende['D' - 'A'] == 'K' - 'A');
+}
+
 int main() {
-    bepaal_sleutel_test();
-    volgend_getal_test();
-    volgende_toekenning_test();
+    //bepaal_sleutel_test();
+    //volgend_getal_test();
+    //volgende_toekenning_test();
+    //bepaal_beschikbare_karakters_test();
+    construeer_volgende_tabel_test();
 
     return 0;
 }
