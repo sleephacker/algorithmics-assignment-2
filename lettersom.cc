@@ -11,47 +11,6 @@ using namespace std;
 int max(int a, int b) { return a > b ? a : b; }
 int min(int a, int b) { return a < b ? a : b; }
 
-// decimale optelling
-vector<int> operator + (const vector<int> a, const vector<int> b) {
-	vector<int> c = vector<int>();
-	int carry = 0;
-	auto i_a = a.rbegin(), i_b = b.rbegin();
-	while(i_a != a.rend() || i_b != b.rend() || carry != 0) {
-		int av = (i_a != a.rend() ? *i_a : 0);
-		int bv = (i_b != b.rend() ? *i_b : 0);
-
-		int v = av + bv + carry;
-		carry = v >= 10 ? 1 : 0;
-		c.insert(c.begin(), v % 10);
-
-		if(i_a != a.rend()) ++i_a;
-		if(i_b != b.rend()) ++i_b;
-	}
-	return c;
-}
-
-// telt hoeveel letters van achteren kloppen (d.w.z. hoeveel er niet definitief niet kloppen)
-int letters_goed(char *woord2, vector<int> cijfers2, int toekenning[26]) {
-
-	int tmp_toekenning[26];
-	memcpy(tmp_toekenning, toekenning, 26 * sizeof(int));
-
-	int len = strlen(woord2);
-	int i = len - 1;
-	int aantal = 0;
-	for(auto c = cijfers2.rbegin(); c != cijfers2.rend(); ++c, i--, aantal++) {
-		if(tmp_toekenning[woord2[i] - 'A'] == -1) {
-			for(int j = 0; j < 26; j++)
-				if(toekenning[j] == *c) // een andere letter heeft dit getal al
-					return aantal;
-			tmp_toekenning[woord2[i] - 'A'] = *c; // ken dit getal toe aan deze letter en kijk verder
-		}
-		else if(tmp_toekenning[woord2[i] - 'A'] != *c)
-			return aantal;
-	}
-	return aantal;
-}
-
 Lettersom::Lettersom() {
 	// TODO: zonodig implementeren
 
@@ -181,6 +140,48 @@ bool volgende_toekenning(int toekenning[26], string sleutel, bool geldig) {
     }
     else return vervang_toegekend(toekenning, sleutel);
 }
+
+// decimale optelling
+vector<int> operator + (const vector<int> a, const vector<int> b) {
+	vector<int> c = vector<int>();
+	int carry = 0;
+	auto i_a = a.rbegin(), i_b = b.rbegin();
+	while(i_a != a.rend() || i_b != b.rend() || carry != 0) {
+		int av = (i_a != a.rend() ? *i_a : 0);
+		int bv = (i_b != b.rend() ? *i_b : 0);
+
+		int v = av + bv + carry;
+		carry = v >= 10 ? 1 : 0;
+		c.insert(c.begin(), v % 10);
+
+		if(i_a != a.rend()) ++i_a;
+		if(i_b != b.rend()) ++i_b;
+	}
+	return c;
+}
+
+// telt hoeveel letters van achteren kloppen (d.w.z. hoeveel er niet definitief niet kloppen)
+int letters_goed(char *woord2, vector<int> cijfers2, int toekenning[26]) {
+
+	int tmp_toekenning[26];
+	memcpy(tmp_toekenning, toekenning, 26 * sizeof(int));
+
+	int len = strlen(woord2);
+	int i = len - 1;
+	int aantal = 0;
+	for(auto c = cijfers2.rbegin(); c != cijfers2.rend(); ++c, i--, aantal++) {
+		if(tmp_toekenning[woord2[i] - 'A'] == -1) {
+			for(int j = 0; j < 26; j++)
+				if(toekenning[j] == *c) // een andere letter heeft dit getal al
+					return aantal;
+			tmp_toekenning[woord2[i] - 'A'] = *c; // ken dit getal toe aan deze letter en kijk verder
+		}
+		else if(tmp_toekenning[woord2[i] - 'A'] != *c)
+			return aantal;
+	}
+	return aantal;
+}
+
 
 // maakt vanaf achteren cijfers van een woord, en stopt bij de eerste letter waar nog geen toekenning voor is
 vector<int> geef_cijfers(char *woord, int toekenning[26]) {
