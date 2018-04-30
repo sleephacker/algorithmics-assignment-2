@@ -206,7 +206,7 @@ bool toekenning_is_oplossing(char *woord0, char *woord1, char *woord2, int toeke
 	}
 }
 
-int woord_naar_getal(char const* woord, int toekenning[26]) {
+/*int woord_naar_getal(char const* woord, int toekenning[26]) {
 
     int getal = 0;
     int len = strlen(woord);
@@ -245,6 +245,66 @@ int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
 
         if(is_oplossing) oplossingen += 1;
     }
+}*/
+
+struct zoek_context {
+	char *woord0, *woord1, *woord2;
+	int toekenning[26];
+	bool gebruikt[10];
+	string sleutel;
+
+	zoek_context(char *woord0, char *woord1, char *woord2, int toekenning[26], bool gebruikt[10], string sleutel) {
+		this->woord0 = woord0;
+		this->woord1 = woord1;
+		this->woord2 = woord2;
+		this->sleutel = sleutel;
+		memcpy(this->toekenning, toekenning, 26 * sizeof(int));
+		memcpy(this->gebruikt, gebruikt, 10 * sizeof(bool));
+	}
+};
+
+void print_toekenning(int toekenning[26]) {
+	cout << "toekenning:" << endl;
+	for(int i = 'A'; i <= 'Z'; i++)
+		if(toekenning[i - 'A'] != -1)
+			cout << "\t" << (char)i << " = " << toekenning[i - 'A'] << endl;
+}
+
+int zoek_die_shit(zoek_context *z, int i) {
+	int n = 0;
+	bool beginletter = z->sleutel[i] == z->woord0[0] || z->sleutel[i] == z->woord1[0] || z->sleutel[i] == z->woord2[0];
+	for(int j = beginletter ? 1 : 0; j < 10; j++)
+		if(!z->gebruikt[j]) {
+			z->toekenning[z->sleutel[i] - 'A'] = j;
+			bool geldig;
+			bool biem = toekenning_is_oplossing(z->woord0, z->woord1, z->woord2, z->toekenning, geldig);
+			if(biem) {
+				n++;
+				//print_toekenning(z->toekenning);
+			}
+			else if(geldig && i < z->sleutel.length() - 1) {
+				z->gebruikt[j] = true;
+				n += zoek_die_shit(z, i + 1);
+				z->gebruikt[j] = false;
+			}
+			z->toekenning[z->sleutel[i] - 'A'] = -1;
+		}
+	return n;
+}
+
+int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
+	if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
+
+	string sleutel = bepaal_sleutel(woord0, woord1, woord2);
+	int toekenning[26];
+	for(int i = 0; i < 26; i++) toekenning[i] = -1;
+	bool gebruikt[10];
+	for(int i = 0; i < 10; i++) gebruikt[i] = false;
+
+	zoek_context *z = new zoek_context(woord0, woord1, woord2, toekenning, gebruikt, sleutel);
+	int n = zoek_die_shit(z, 0);
+	delete z;
+	return n;
 }
 
 void bepaal_beschikbare_karakters(
@@ -265,7 +325,7 @@ void bepaal_beschikbare_karakters(
     int vrije_karakters = 10 - sleutel.length();
 
     // Bepaal welke karakters gebruikt worden voor het derde woord.
-    for(int i = 0; i < 26; i++) {
+    /*for(int i = 0; i < 26; i++) {
 
         if(sleutel.find(i + 'A') != string::npos) karakter_beschikbaar[i] = true;
         else if(vrij_karakter > 0) {
@@ -273,7 +333,15 @@ void bepaal_beschikbare_karakters(
             vrij_karakter [i] = true;
             vrije_karakters -= 1;
         }
-    }
+    }*/
+	for(int i = 0; i < sleutel.length(); i++)
+		karakter_beschikbaar[sleutel[i] - 'A'] = true;
+	for(int i = 0, n = 0; n < vrije_karakters; i++)
+		if(!karakter_beschikbaar[i]) {
+			karakter_beschikbaar[i] = true;
+			vrij_karakter[i] = true;
+			n++;
+		}
 }
 
 // Na afloop is volgende gevuld op zo'n manier dat, om te weten te komen
@@ -300,18 +368,19 @@ void construeer_volgende_tabel(bool karakter_beschikbaar[26], int volgende[26], 
 // is gelukt.
 bool volgend_woord(char *derde_woord, int volgende[26], int max) {
 
-    char volgend_kar = volgende[derde_woord[0] - 'A'] + 'A';
+	char kar = derde_woord[0];
+    char volgend_kar = volgende[kar - 'A'] + 'A';
     derde_woord[0] = volgend_kar;
 
-    if(volgend_kar > derde_woord[0]) return true;
-    else if(volgend_kar < derde_woord[0] && max == 1) return false;
+    if(volgend_kar > kar) return true;
+    else if(volgend_kar < kar && max == 1) return false;
     else return volgend_woord(derde_woord + 1, volgende, max - 1);
 }
 
 // Bepaal of de vrije karakters in een oplopende volgorde staan.
 bool vrije_karakters_goede_volgorde(char *derde_woord,  bool vrij_karakter[26]) {
 
-    int vorige = -1;
+    /*int vorige = -1;
 
     for(int i = 0; i < 26; i++) {
         if(vrij_karakter[i]) {
@@ -322,11 +391,57 @@ bool vrije_karakters_goede_volgorde(char *derde_woord,  bool vrij_karakter[26]) 
         }
     }
 
-    return true;
+    return true;*/
+
+	int vorige = -1;
+	for(int i = 0; i < strlen(derde_woord); i++)
+		if(vrij_karakter[derde_woord[i] - 'A']) {
+			if(derde_woord[i] < vorige)
+				return false;
+			vorige = derde_woord[i];
+		}
+	return true;
 }
 
-int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
+int zoek_die_shit_snel(zoek_context *z, int i) {
+	int n = 0;
+	bool beginletter = z->sleutel[i] == z->woord0[0] || z->sleutel[i] == z->woord1[0] || z->sleutel[i] == z->woord2[0];
+	for(int j = beginletter ? 1 : 0; j < 10; j++)
+		if(!z->gebruikt[j]) {
+			z->toekenning[z->sleutel[i] - 'A'] = j;
+			bool geldig;
+			bool biem = toekenning_is_oplossing(z->woord0, z->woord1, z->woord2, z->toekenning, geldig);
+			if(biem)
+				n++;
+			else if(geldig && i < z->sleutel.length() - 1) {
+				z->gebruikt[j] = true;
+				n += zoek_die_shit(z, i + 1);
+				z->gebruikt[j] = false;
+			}
+			if(n > 1) return n;
+			z->toekenning[z->sleutel[i] - 'A'] = -1;
+		}
+	return n;
+}
 
+bool unieke_oplossing(char *woord0, char *woord1, char *woord2) {
+	if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
+
+	string sleutel = bepaal_sleutel(woord0, woord1, woord2);
+	int toekenning[26];
+	for(int i = 0; i < 26; i++) toekenning[i] = -1;
+	bool gebruikt[10];
+	for(int i = 0; i < 10; i++) gebruikt[i] = false;
+
+	zoek_context *z = new zoek_context(woord0, woord1, woord2, toekenning, gebruikt, sleutel);
+	int n = zoek_die_shit_snel(z, 0);
+	delete z;
+	return n == 1;
+}
+
+
+int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
+	cout << "1" << endl;
     // Minimale groote van het derde woord
     int min = max(strlen(woord0), strlen(woord1));
     // Maximale grootte
@@ -344,9 +459,15 @@ int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
     int volgende[26];
     int eerste_kar;
     construeer_volgende_tabel(karakter_beschikbaar, volgende, eerste_kar);
+	eerste_kar += 'A';
+	cout << "eerste_kar: " << (char)eerste_kar << "(" << eerste_kar << ")" << endl;
+	for(int i = 0; i < 26; i++)
+		cout << i << " -> " << volgende[i] << endl;
 
-    char derde_woord[max + 1] = { '\0' };
-    memset(derde_woord, eerste_kar, min);
+	char derde_woord[max + 1];// = { '\0' };
+    memset(derde_woord, eerste_kar, min * sizeof(char));
+	derde_woord[max + 1] = 0;
+	cout << "derde_woord: " << derde_woord << endl;
 
     // We gaan nu alle mogelijke derde woorden genereren
     // met de beschikbare karakters.
@@ -357,14 +478,21 @@ int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
     // telkens het volgende karakter wordt genomen.
 
     int oplossingen = 0;
-
+	int woorden = 0;
+	int goede_woorden = 0;
     do {
+		if((woorden++ % 1000) == 0) {
+			cout << woorden << " mogelijkheden bekeken." << endl;
+			cout << goede_woorden << " keer naar een unieke oplossing gezocht." << endl;
+			cout << oplossingen << " oplossingen gevonden." << endl;
+		}
+		//cout << derde_woord << endl;
         // Wordt alleen als een oplossing gezien als de vrije karakters
         // in een oplopende volgorde staan. Zie 'Het is de bedoeling dat...'
         // in de opdracht.
         if(!vrije_karakters_goede_volgorde(derde_woord, vrij_karakter)) continue;
-
-        if(zoekoplossingen(woord0, woord1, derde_woord) == 1) oplossingen++;
+		goede_woorden++;
+        if(unieke_oplossing(woord0, woord1, derde_woord) == 1) oplossingen++;
     } while(volgend_woord(derde_woord, volgende, max));
     
     return oplossingen;
