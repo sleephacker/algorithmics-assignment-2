@@ -65,15 +65,15 @@ string bepaal_sleutel(char const *woord0, char const *woord1, char const *woord2
 
 int volgend_getal(int toekenning[26], int hoger_dan) {
 
-    // Alle negen getallen niet gebruikt.
-    bool gebruikt[9] = {false};
+    // Alle tien getallen niet gebruikt.
+    bool gebruikt[10] = {false};
 
     for(int i = 0; i < 26; i++)
     {
         if(toekenning[i] != -1) gebruikt[toekenning[i]] = true;
     }
 
-    for(int i = hoger_dan + 1; i < 9; i++)
+    for(int i = hoger_dan + 1; i <= 9; i++)
     {
         if(!gebruikt[i]) return i;
     }
