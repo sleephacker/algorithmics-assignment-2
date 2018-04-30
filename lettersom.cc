@@ -20,7 +20,7 @@ Lettersom::Lettersom() {
 }  // Lettersom
 
 
-bool lengtes_kloppen(char *woord0, char *woord1, char *woord2) {
+bool lengtes_kloppen(char const *woord0, char const *woord1, char const *woord2) {
     
     // TODO: hoogstens tien verschillende hoofdletters
 
@@ -62,6 +62,31 @@ string bepaal_sleutel(char const *woord0, char const *woord1, char const *woord2
 
     return sleutel;
 }
+
+void print_toekenning(
+        int toekenning[26], 
+        string sleutel,
+        const char *woord0, 
+        const char *woord1,
+        const char *woord2) {
+    
+    cout << "=============================================================" << endl;
+
+    for(int i = 0; i < sleutel.length(); i++) {
+        cout << sleutel[i] << ":";
+        cout << toekenning[sleutel[i] - 'A'] << ", ";
+    }
+
+    cout << endl;
+
+    for(int i = 0; i < strlen(woord0); i++) cout << toekenning[woord0[i] - 'A'];
+    cout << " + ";
+    for(int i = 0; i < strlen(woord1); i++) cout << toekenning[woord1[i] - 'A'];
+    cout << " = ";
+    for(int i = 0; i < strlen(woord2); i++) cout << toekenning[woord2[i] - 'A'];
+    cout << endl;
+}
+
 
 int volgend_getal(int toekenning[26], int hoger_dan) {
 
@@ -161,7 +186,7 @@ vector<int> operator + (const vector<int> a, const vector<int> b) {
 }
 
 // telt hoeveel letters van achteren kloppen (d.w.z. hoeveel er niet definitief niet kloppen)
-int letters_goed(char *woord2, vector<int> cijfers2, int toekenning[26]) {
+int letters_goed(char const *woord2, vector<int> cijfers2, int toekenning[26]) {
 
 	int tmp_toekenning[26];
 	memcpy(tmp_toekenning, toekenning, 26 * sizeof(int));
@@ -184,14 +209,14 @@ int letters_goed(char *woord2, vector<int> cijfers2, int toekenning[26]) {
 
 
 // maakt vanaf achteren cijfers van een woord, en stopt bij de eerste letter waar nog geen toekenning voor is
-vector<int> geef_cijfers(char *woord, int toekenning[26]) {
+vector<int> geef_cijfers(char const *woord, int toekenning[26]) {
 	vector<int> cijfers = vector<int>();
 	for(int i = strlen(woord) - 1; i >= 0  && toekenning[woord[i] - 'A'] != -1; i--)
 		cijfers.insert(cijfers.begin(), toekenning[woord[i] - 'A']);
 	return cijfers;
 }
 
-bool toekenning_is_oplossing(char *woord0, char *woord1, char *woord2, int toekenning[26], bool &geldig) {
+bool toekenning_is_oplossing(char const *woord0, char const *woord1, char const *woord2, int toekenning[26], bool &geldig) {
 	vector<int> cijfers0 = geef_cijfers(woord0, toekenning);
 	vector<int> cijfers1 = geef_cijfers(woord1, toekenning);
 	int n = letters_goed(woord2, cijfers0 + cijfers1, toekenning);
@@ -223,12 +248,14 @@ int woord_naar_getal(char const* woord, int toekenning[26]) {
     return getal;
 }
 
-int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
+int Lettersom::zoekoplossingen(char const *woord0, char const *woord1, char const *woord2) {
 
     if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
 
     // Zie implementatie.md
     string sleutel = bepaal_sleutel(woord0, woord1, woord2);
+
+    cout << sleutel << endl;
 
     int oplossingen = 0;
     int toekenning[26];
@@ -243,7 +270,7 @@ int Lettersom::zoekoplossingen(char *woord0, char *woord1, char *woord2) {
 
         bool is_oplossing = toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig);
 
-        if(is_oplossing) oplossingen += 1;
+        if(is_oplossing) is_oplossing += 1;
     }
 }
 
