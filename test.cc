@@ -8,7 +8,17 @@ public:
 
 #define LettersomHVar
 #include "./lettersom.cc"
+
+#ifndef __CYGWIN__
 #include <assert.h>
+#else
+void assert(bool condition) {
+	if(condition)
+		cout << "Assert succeded." << endl;
+	else
+		cout << "Assert failed." << endl;
+}
+#endif
 
 void bepaal_sleutel_test() {
 
@@ -101,12 +111,86 @@ void construeer_volgende_tabel_test() {
     assert(volgende['D' - 'A'] == 'K' - 'A');
 }
 
+void toekenning_is_oplossing_test() {
+	int toekenning[26];
+	bool geldig;
+	char woord0[5] = "SINT";
+	char woord1[5] = "PIET";
+	char woord2[6] = "RUZIE";
+
+	for(int i = 0; i < 26; i++)
+		toekenning[i] = -1;
+
+	toekenning['E' - 'A'] = 4;
+	toekenning['I' - 'A'] = 9;
+	toekenning['N' - 'A'] = 5;
+	toekenning['P' - 'A'] = 6;
+	toekenning['R' - 'A'] = 1;
+	toekenning['S' - 'A'] = 3;
+	toekenning['T' - 'A'] = 2;
+	toekenning['U' - 'A'] = 0;
+	toekenning['Z' - 'A'] = 8;
+	assert(toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(geldig);
+
+	toekenning['E' - 'A'] = 4;
+	toekenning['I' - 'A'] = 9;
+	toekenning['N' - 'A'] = 5;
+	toekenning['P' - 'A'] = 3;
+	toekenning['R' - 'A'] = 1;
+	toekenning['S' - 'A'] = 6;
+	toekenning['T' - 'A'] = 2;
+	toekenning['U' - 'A'] = 0;
+	toekenning['Z' - 'A'] = 8;
+	assert(toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(geldig);
+
+	toekenning['E' - 'A'] = 6;
+	toekenning['I' - 'A'] = 4;
+	toekenning['N' - 'A'] = 8;
+	toekenning['P' - 'A'] = 7;
+	toekenning['R' - 'A'] = 1;
+	toekenning['S' - 'A'] = 5;
+	toekenning['T' - 'A'] = 3;
+	toekenning['U' - 'A'] = 2;
+	toekenning['Z' - 'A'] = 9;
+	assert(toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(geldig);
+
+	toekenning['E' - 'A'] = 6;
+	toekenning['I' - 'A'] = 4;
+	toekenning['N' - 'A'] = 8;
+	toekenning['P' - 'A'] = 5;
+	toekenning['R' - 'A'] = 1;
+	toekenning['S' - 'A'] = 7;
+	toekenning['T' - 'A'] = 3;
+	toekenning['U' - 'A'] = 2;
+	toekenning['Z' - 'A'] = 9;
+	assert(toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(geldig);
+
+	for(int i = 0; i < 26; i++)
+		toekenning[i] = -1;
+	toekenning['E' - 'A'] = 5;
+	toekenning['T' - 'A'] = 3;
+	assert(!toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(!geldig);
+
+	for(int i = 0; i < 26; i++)
+		toekenning[i] = -1;
+	toekenning['E' - 'A'] = 2;
+	toekenning['T' - 'A'] = 6;
+	assert(!toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(geldig);
+}
+
 int main() {
     //bepaal_sleutel_test();
     //volgend_getal_test();
     //volgende_toekenning_test();
     //bepaal_beschikbare_karakters_test();
-    construeer_volgende_tabel_test();
+    //construeer_volgende_tabel_test();
+	toekenning_is_oplossing_test();
 
     return 0;
 }
