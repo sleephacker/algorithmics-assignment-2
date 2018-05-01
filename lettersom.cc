@@ -347,6 +347,7 @@ void bepaal_beschikbare_karakters(
 // Het beschikbare karakter na 'C' is dan dus volgende['C' - 'A'] + 'A'.
 // karakter_beschikbaar geeft aan welke karakters in het alfabet beschikbaar zijn.
 void construeer_volgende_tabel(bool karakter_beschikbaar[26], int volgende[26], int &eerste_kar) {
+    memset(volgende, -1, sizeof(int)*26);
 
     for(eerste_kar = 0; !karakter_beschikbaar[eerste_kar]; eerste_kar++);
     
