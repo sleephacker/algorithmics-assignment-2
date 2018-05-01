@@ -348,15 +348,29 @@ void construeer_volgende_tabel(bool karakter_beschikbaar[26], int volgende[26], 
 
 // Geef terug of er een volgend woord is gevonden, of dat dit niet
 // is gelukt.
-bool volgend_woord(char *derde_woord, int volgende[26], int max) {
+bool volgend_woord(char *derde_woord, int eerste_kar, int volgende[26], int max) {
 
-	char kar = derde_woord[0];
-	char volgend_kar = volgende[kar - 'A'] + 'A';
-	derde_woord[0] = volgend_kar;
+    int len = strlen(derde_woord);
 
-	if(volgend_kar > kar) return true;
-	else if(volgend_kar < kar && max == 1) return false;
-	else return volgend_woord(derde_woord + 1, volgende, max - 1);
+    for(int i = 0; i < len; i++) {
+
+        char kar = derde_woord[i];
+
+        // Het laatste karakter 'wijst' naar het eerste karakter
+        derde_woord[i] = volgende[kar - 'A'] + 'A';
+
+        if(derde_woord[i] > kar) {
+            return true;
+        }
+    }
+
+    // Door de loop heen, alles gereset naar het eerste karakter.
+    // Heeft het woord al de maximale lengte?
+    // Zo niet, betrek een extra karakter erbij
+    if(len == max) return false;
+    
+    derde_woord[len] = eerste_kar;
+    return true;
 }
 
 // Bepaal of de vrije karakters in een oplopende volgorde staan.
