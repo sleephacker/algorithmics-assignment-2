@@ -67,23 +67,24 @@ void doepuzzel() {
 void construeerpuzzels() {
 	Lettersom *ls1;  // pointer, om makkeijk nieuwe objecten te kunnen maken
 					// en weer weg te gooien
-	//char woord0[maxwoordlengte + 1], woord1[maxwoordlengte + 1];
-	//
-	char const* woord0 = "ELF";
-	char const* woord1 = "ELF";
 
 	clock_t t1, t2;
 	int len0, len1,
 		nrpuzzels;
 
-    /*
+#ifdef test_construeer
+	char const* woord0 = "ELF";
+	char const* woord1 = "ELF";
+#else
+	char woord0[maxwoordlengte + 1], woord1[maxwoordlengte + 1];
+
 	cout << endl;
 	cout << "Voer de eerste twee woorden van de puzzel in (even lang)." << endl;
 	cout << "Woord 0: ";
-	//cin >> woord0;
+	cin >> woord0;
 	cout << "Woord 1: ";
-	//cin >> woord1;
-	*/
+	cin >> woord1;
+#endif
 
 	len0 = strlen(woord0);
 	len1 = strlen(woord1);
@@ -115,9 +116,9 @@ void construeerpuzzels() {
 //*************************************************************************
 
 void hoofdmenu() {
+#ifdef test_contrueer
     construeerpuzzels();
-
-    /*
+#else
 	int keuze;
 
 	do {
@@ -140,8 +141,7 @@ void hoofdmenu() {
 
 	}
 	while(keuze != 3);
-*/
-
+#endif
 }  // hoofdmenu
 
 //*************************************************************************

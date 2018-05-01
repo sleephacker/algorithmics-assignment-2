@@ -201,7 +201,7 @@ int letters_goed(char const *woord2, vector<int> cijfers2, int toekenning[26]) {
 	int len = strlen(woord2);
 	int i = len - 1;
 	int aantal = 0;
-	for(auto c = cijfers2.rbegin(); c != cijfers2.rend(); ++c, i--, aantal++) {
+	for(auto c = cijfers2.rbegin(); c != cijfers2.rend(), i >= 0; ++c, i--, aantal++) {
 		if(tmp_toekenning[woord2[i] - 'A'] == -1) {
 			for(int j = 0; j < 26; j++)
 				if(toekenning[j] == *c) // een andere letter heeft dit getal al
@@ -232,10 +232,17 @@ bool toekenning_is_oplossing(char const *woord0,
 
 	vector<int> cijfers0 = geef_cijfers(woord0, toekenning);
 	vector<int> cijfers1 = geef_cijfers(woord1, toekenning);
+	
+	if(cijfers0[0] == 0 || cijfers1[0] == 0)
+		return geldig = false;
 
-	int n = letters_goed(woord2, cijfers0 + cijfers1, toekenning);
+	vector<int> cijfers2 = cijfers0 + cijfers1;
+
+	int n = letters_goed(woord2, cijfers2, toekenning);
 	geldig = n >= (int)min(cijfers0.size(), cijfers1.size());
 
+	if(cijfers2[0] == 0 || cijfers2.size() != strlen(woord2))
+		return false;
 	if(n != (int)strlen(woord2) || cijfers0.size() != strlen(woord0) || cijfers1.size() != strlen(woord1))
 		return false;
 	else {
@@ -301,7 +308,7 @@ int Lettersom::zoekoplossingen(char const *woord0,
         if(is_oplossing) {
             oplossingen += 1;
 
-            print_toekenning(toekenning, sleutel, woord0, woord1, woord2);
+            if(!stop) print_toekenning(toekenning, sleutel, woord0, woord1, woord2);
             if(stop && oplossingen > 1) return oplossingen;
         }
     }
@@ -479,8 +486,9 @@ int Lettersom::construeerpuzzels(char const *woord0, char const *woord1) {
 
 	int oplossingen = 0;
 	int woorden = 0;
-	int goede_woorden = 0;
 	do {
+		if(++woorden % 10000 == 0)
+			cout << woorden << " woorden bekeken, " << oplossingen << " oplossingen gevonden." << endl;
 
 		// Wordt alleen als een oplossing gezien als de vrije karakters
 		// in een oplopende volgorde staan. Zie 'Het is de bedoeling dat...'

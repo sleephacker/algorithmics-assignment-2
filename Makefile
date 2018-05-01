@@ -1,6 +1,6 @@
 CC = g++
 
-CompileParms = -c -Wall
+CompileParms = -c -Wall -O3
 
 OBJS = lettersom.o main.o
 

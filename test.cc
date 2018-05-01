@@ -8,7 +8,17 @@ public:
 
 #define LettersomHVar
 #include "./lettersom.cc"
+
+#ifndef __CYGWIN__
 #include <assert.h>
+#else
+void assert(bool condition) {
+	if(condition)
+		cout << "Assert succeded." << endl;
+	else
+		cout << "Assert failed." << endl;
+}
+#endif
 
 void bepaal_sleutel_test() {
 
@@ -198,6 +208,7 @@ void toekenning_is_oplossing_test() {
 	toekenning['E' - 'A'] = 2;
 	toekenning['T' - 'A'] = 6;
 	assert(!toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(geldig);
 
     for(int i = 0; i < 26; i++)
 		toekenning[i] = -1;
@@ -207,7 +218,6 @@ void toekenning_is_oplossing_test() {
     toekenning['L' - 'A'] = 8;
 
     assert(!toekenning_is_oplossing("ELF", "ELF", "FEE", toekenning, geldig));
-
 	assert(geldig);
 }
 
