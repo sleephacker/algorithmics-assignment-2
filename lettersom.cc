@@ -258,7 +258,12 @@ int woord_naar_getal(char const* woord, int toekenning[26]) {
     return getal;
 }
 
-int Lettersom::zoekoplossingen(char const *woord0, char const *woord1, char const *woord2) {
+// 'stop' dan wordt er gestopt als er meer dan één oplossing wordt gevonden.
+// De mogelijke resultaten zijn in dat geval dus 0, 1, 2
+int Lettersom::zoekoplossingen(char const *woord0,
+        char const *woord1,
+        char const *woord2,
+        bool stop) {
 
     if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
 
@@ -288,7 +293,12 @@ int Lettersom::zoekoplossingen(char const *woord0, char const *woord1, char cons
 
         bool is_oplossing = toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig);
 
-        if(is_oplossing) oplossingen += 1;
+        if(is_oplossing) {
+            oplossingen += 1;
+
+            print_toekenning(toekenning, sleutel, woord0, woord1, woord2);
+            if(stop && oplossingen > 1) return oplossingen;
+        }
     }
 }
 

@@ -20,7 +20,7 @@ public:
 	// Pre:
 	// * nwoord0, nwoord1 en nwoord2 bevatten elk hoogstens maxwoordlengte
 	//   karakters
-	int zoekoplossingen(char const *nwwoord0, char const *nwwoord1, char const *nwwoord2);
+	int zoekoplossingen(char const *nwwoord0, char const *nwwoord1, char const *nwwoord2, bool stop=false);
 
 	// Controleer of nwwoord0 en nwwoord1 alleen letters uit
 	// het alfabet bevatten (hoogstens 10 verschillende hoofdletters).
