@@ -19,6 +19,20 @@ Lettersom::Lettersom() {
 
 }  // Lettersom
 
+bool is_hoofdletter(char c) {
+
+    return c >= 65 && c <= 90;
+}
+
+bool geldig_woord(char const *w) {
+
+    int len = strlen(w);
+
+    if(len == 0) return false;
+    for(int i = 0; i < len; i++) if(!is_hoofdletter(w[i])) return false;
+
+    return true;
+}
 
 bool lengtes_kloppen(char const *woord0, char const *woord1, char const *woord2) {
     
@@ -72,18 +86,18 @@ void print_toekenning(
     
     cout << "=============================================================" << endl;
 
-    for(int i = 0; i < sleutel.length(); i++) {
+    for(int i = 0; i < (int)sleutel.length(); i++) {
         cout << sleutel[i] << ":";
         cout << toekenning[sleutel[i] - 'A'] << ", ";
     }
 
     cout << endl;
 
-    for(int i = 0; i < strlen(woord0); i++) cout << toekenning[woord0[i] - 'A'];
+    for(int i = 0; i < (int)strlen(woord0); i++) cout << toekenning[woord0[i] - 'A'];
     cout << " + ";
-    for(int i = 0; i < strlen(woord1); i++) cout << toekenning[woord1[i] - 'A'];
+    for(int i = 0; i < (int)strlen(woord1); i++) cout << toekenning[woord1[i] - 'A'];
     cout << " = ";
-    for(int i = 0; i < strlen(woord2); i++) cout << toekenning[woord2[i] - 'A'];
+    for(int i = 0; i < (int)strlen(woord2); i++) cout << toekenning[woord2[i] - 'A'];
     cout << endl;
 }
 
@@ -114,7 +128,6 @@ int volgend_getal(int toekenning[26], int hoger_dan) {
 bool vervang_toegekend(int toekenning[26], string sleutel) {
 
     int slen = sleutel.length();
-    int laatste_idx = 0;
 
     for(int i = slen - 1; i >= 0; i--) {
          
@@ -217,14 +230,17 @@ vector<int> geef_cijfers(char const *woord, int toekenning[26]) {
 }
 
 bool toekenning_is_oplossing(char const *woord0, char const *woord1, char const *woord2, int toekenning[26], bool &geldig) {
+
 	vector<int> cijfers0 = geef_cijfers(woord0, toekenning);
 	vector<int> cijfers1 = geef_cijfers(woord1, toekenning);
+
 	int n = letters_goed(woord2, cijfers0 + cijfers1, toekenning);
-	geldig = n >= min(cijfers0.size(), cijfers1.size());
-	if(n != strlen(woord2) || cijfers0.size() != strlen(woord0) || cijfers1.size() != strlen(woord1))
+	geldig = n >= (int)min(cijfers0.size(), cijfers1.size());
+
+	if(n != (int)strlen(woord2) || cijfers0.size() != strlen(woord0) || cijfers1.size() != strlen(woord1))
 		return false;
 	else {
-		for(int i = 0; i < strlen(woord2); i++)
+		for(int i = 0; i < (int)strlen(woord2); i++)
 			if(toekenning[woord2[i] - 'A'] == -1)
 				return false;
 		return true;
@@ -251,6 +267,14 @@ int woord_naar_getal(char const* woord, int toekenning[26]) {
 int Lettersom::zoekoplossingen(char const *woord0, char const *woord1, char const *woord2) {
 
     if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
+
+    if(!geldig_woord(woord0)
+            || !geldig_woord(woord1)
+            || !geldig_woord(woord2)) {
+
+        cout << "De ingevoerde woorden zijn ongeldig.. heeft u enkel hoofdletters gebruikt?" << endl;
+        return 0;
+    }
 
     // Zie implementatie.md
     string sleutel = bepaal_sleutel(woord0, woord1, woord2);
@@ -292,7 +316,7 @@ void bepaal_beschikbare_karakters(
     int vrije_karakters = 10 - sleutel.length();
 
     // Bepaal welke karakters gebruikt worden voor het derde woord.
-	for(int i = 0; i < sleutel.length(); i++)
+	for(int i = 0; i < (int)sleutel.length(); i++)
 		karakter_beschikbaar[sleutel[i] - 'A'] = true;
 	for(int i = 0, n = 0; n < vrije_karakters; i++)
 		if(!karakter_beschikbaar[i]) {
@@ -339,7 +363,7 @@ bool volgend_woord(char *derde_woord, int volgende[26], int max) {
 bool vrije_karakters_goede_volgorde(char *derde_woord,  bool vrij_karakter[26]) {
 
 	int vorige = -1;
-	for(int i = 0; i < strlen(derde_woord); i++)
+	for(int i = 0; i < (int)strlen(derde_woord); i++)
 		if(vrij_karakter[derde_woord[i] - 'A']) {
 			if(derde_woord[i] < vorige)
 				return false;
@@ -349,6 +373,11 @@ bool vrije_karakters_goede_volgorde(char *derde_woord,  bool vrij_karakter[26]) 
 }
 
 int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
+
+    if(!geldig_woord(woord0) || !geldig_woord(woord1)) {
+        cout << "De ingevoerde woorden zijn ongeldig.. heeft u alleen hoofdletters gebruikt?" << endl;
+        return 0;
+    }
 
 	// Minimale groote van het derde woord
 	int min = max(strlen(woord0), strlen(woord1));

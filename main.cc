@@ -67,7 +67,7 @@ void doepuzzel() {
 void construeerpuzzels() {
 	Lettersom *ls1;  // pointer, om makkeijk nieuwe objecten te kunnen maken
 					// en weer weg te gooien
-	char woord0[maxwoordlengte + 1], woord1[maxwoordlengte + 1], woord2[maxwoordlengte + 1];
+	char woord0[maxwoordlengte + 1], woord1[maxwoordlengte + 1];
 	clock_t t1, t2;
 	int len0, len1,
 		nrpuzzels;
