@@ -11,13 +11,7 @@ using namespace std;
 int max(int a, int b) { return a > b ? a : b; }
 int min(int a, int b) { return a < b ? a : b; }
 
-Lettersom::Lettersom() {
-	// TODO: zonodig implementeren
-
-	cout << endl;
-	cout << "De constructor van Lettersom is nog niet ge-implementeerd." << endl;
-
-}  // Lettersom
+Lettersom::Lettersom() {}
 
 bool is_hoofdletter(char c) {
 
