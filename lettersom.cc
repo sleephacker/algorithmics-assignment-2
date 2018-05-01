@@ -360,15 +360,37 @@ bool volgend_woord(char *derde_woord, int volgende[26], int max) {
 }
 
 // Bepaal of de vrije karakters in een oplopende volgorde staan.
-bool vrije_karakters_goede_volgorde(char *derde_woord,  bool vrij_karakter[26]) {
+// Stel dat A,B,C vrije karakters zijn
+// Dan moeten ABC en ACB niet dubbel geteld worden.
+// Verder moeten ABB en ACC ook niet dubbel geteld worden.
+// Hiervoor zorgen we door te checken dat:
+// * De vrije karakters in een vaste volgorde staan
+// * Er tussen de vrije karakters geen vrije karakters worden overgeslagen
+bool vrije_karakters_goede_volgorde(char const *derde_woord, bool vrij_karakter[26]) {
 
-	int vorige = -1;
-	for(int i = 0; i < (int)strlen(derde_woord); i++)
-		if(vrij_karakter[derde_woord[i] - 'A']) {
-			if(derde_woord[i] < vorige)
-				return false;
-			vorige = derde_woord[i];
+	int huidig_vrij_karakter = -1;
+
+	for(int i = 0; i < (int)strlen(derde_woord); i++) {
+
+        int kar = derde_woord[i] - 'A';
+
+		if(vrij_karakter[kar]) {
+
+		    if(kar == huidig_vrij_karakter) continue;
+            else if(kar < huidig_vrij_karakter) return false;
+            else {
+
+                // Zoek volgend vrij karakter
+                for(huidig_vrij_karakter++;
+                        !vrij_karakter[huidig_vrij_karakter];
+                        huidig_vrij_karakter++);
+
+                if(kar == huidig_vrij_karakter) continue;
+                else return false;
+            }
 		}
+	}
+
 	return true;
 }
 

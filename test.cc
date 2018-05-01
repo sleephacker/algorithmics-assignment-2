@@ -195,13 +195,42 @@ void toekenning_is_oplossing_test() {
 	assert(geldig);
 }
 
+void vrije_karakters_goede_volgorde_test() {
+
+    bool vrije_karakters[26] = { false };
+    
+    char const *derde_woord = "KRADCC";
+    
+    vrije_karakters['A' - 'A'] = true;
+    vrije_karakters['B' - 'A'] = true;
+    vrije_karakters['C' - 'A'] = true;
+
+    bool goed = vrije_karakters_goede_volgorde(derde_woord, vrije_karakters);
+
+    assert(!goed);
+
+    vrije_karakters['B' - 'A'] = false;
+
+    goed = vrije_karakters_goede_volgorde(derde_woord, vrije_karakters);
+
+    assert(goed);
+    
+    vrije_karakters['A' - 'A'] = false;
+    vrije_karakters['C' - 'A'] = false;
+
+    goed = vrije_karakters_goede_volgorde(derde_woord, vrije_karakters);
+
+    assert(goed);
+}
+
 int main() {
     //bepaal_sleutel_test();
     //volgend_getal_test();
     //volgende_toekenning_test();
     //bepaal_beschikbare_karakters_test();
-    zoek_oplossingen_test();
+    //zoek_oplossingen_test();
     //construeer_volgende_tabel_test();
+    vrije_karakters_goede_volgorde_test();
 
     return 0;
 }
