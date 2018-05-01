@@ -309,21 +309,32 @@ void bepaal_beschikbare_karakters(
     // Unieke karakters
     string sleutel = bepaal_sleutel(woord0, woord1, "");
     
-    // Er zijn maximaal 10 verschillende karakters nodig. Een deel
-    // van deze karakters wordt al bepaald door de karakters in woord0, woord1.
-    // De rest kunnen we vrij kiezen, deze kiezen we simpelweg als de eerste
-    // karakters in het alfabet die nog vrij zijn.
-    int vrije_karakters = 10 - sleutel.length();
+    cout << "Sleutel is " << sleutel << endl;
+
+    // Wat is het maximaal aantal vrije karakters? Stel dat de resulterende som
+    // geen enkel cijfer bevat dat al is toegekend is aan sleutel, dan hebben we
+    // even veel vrije karakters nodig als dat er cijfers in het resultaat staan.
+    // Aangezien het resultaat maximaal lengte 'max' heeft, is dit het mogelijk
+    // aantal vrije karakters.
+    int vrije_karakters = max;
+
+    cout << "Aantal vrije karakters is " << vrije_karakters << endl;
 
     // Bepaal welke karakters gebruikt worden voor het derde woord.
 	for(int i = 0; i < (int)sleutel.length(); i++)
 		karakter_beschikbaar[sleutel[i] - 'A'] = true;
-	for(int i = 0, n = 0; n < vrije_karakters; i++)
-		if(!karakter_beschikbaar[i]) {
-			karakter_beschikbaar[i] = true;
-			vrij_karakter[i] = true;
-			n++;
-		}
+
+    int i = 0;
+    while(vrije_karakters > 0) {
+
+        if(!karakter_beschikbaar[i]) {
+            karakter_beschikbaar[i] = true;
+            vrij_karakter[i] = true;
+            vrije_karakters -= 1;
+        }
+
+        i += 1;
+    }
 }
 
 // Na afloop is volgende gevuld op zo'n manier dat, om te weten te komen
