@@ -215,7 +215,8 @@ int letters_goed(char const *woord2, vector<int> cijfers2, int toekenning[26]) {
 }
 
 
-// maakt vanaf achteren cijfers van een woord, en stopt bij de eerste letter waar nog geen toekenning voor is
+// maakt vanaf achteren cijfers van een woord, en stopt
+// bij de eerste letter waar nog geen toekenning voor is
 vector<int> geef_cijfers(char const *woord, int toekenning[26]) {
 	vector<int> cijfers = vector<int>();
 	for(int i = strlen(woord) - 1; i >= 0  && toekenning[woord[i] - 'A'] != -1; i--)
@@ -223,7 +224,11 @@ vector<int> geef_cijfers(char const *woord, int toekenning[26]) {
 	return cijfers;
 }
 
-bool toekenning_is_oplossing(char const *woord0, char const *woord1, char const *woord2, int toekenning[26], bool &geldig) {
+bool toekenning_is_oplossing(char const *woord0,
+        char const *woord1,
+        char const *woord2, 
+        int toekenning[26],
+        bool &geldig) {
 
 	vector<int> cijfers0 = geef_cijfers(woord0, toekenning);
 	vector<int> cijfers1 = geef_cijfers(woord1, toekenning);
@@ -324,7 +329,7 @@ void bepaal_beschikbare_karakters(
 
     cout << "Aantal vrije karakters is " << vrije_karakters << endl;
 
-    // Bepaal welke karakters gebruikt worden voor het derde woord.
+    // Bepaal welke karakters al gebruikt worden voor het derde woord.
 	for(int i = 0; i < (int)sleutel.length(); i++)
 		karakter_beschikbaar[sleutel[i] - 'A'] = true;
 
@@ -351,6 +356,7 @@ void construeer_volgende_tabel(bool karakter_beschikbaar[26], int volgende[26], 
 
     for(eerste_kar = 0; !karakter_beschikbaar[eerste_kar]; eerste_kar++);
     
+    cout << eerste_kar << endl;
     int vorige = eerste_kar;
 
     for(int i = 25; i >= 0; i--) {
@@ -424,7 +430,7 @@ bool vrije_karakters_goede_volgorde(char const *derde_woord, bool vrij_karakter[
 	return true;
 }
 
-int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
+int Lettersom::construeerpuzzels(char const *woord0, char const *woord1) {
 
     if(!geldig_woord(woord0) || !geldig_woord(woord1)) {
         cout << "De ingevoerde woorden zijn ongeldig.. heeft u alleen hoofdletters gebruikt?" << endl;
@@ -445,6 +451,9 @@ int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
 	bepaal_beschikbare_karakters(karakter_beschikbaar,
 		vrij_karakter, woord0, woord1, min, max);
 
+	for(int i = 0; i < 26; i++) 
+	    if(karakter_beschikbaar[i]) cout << (char)(i + 'A') << " is beschikbaar" << endl;
+
 	int volgende[26];
 	int eerste_kar;
 	construeer_volgende_tabel(karakter_beschikbaar, volgende, eerste_kar);
@@ -452,7 +461,7 @@ int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
 
 	cout << "eerste_kar: " << (char)eerste_kar << "(" << eerste_kar << ")" << endl;
 	for(int i = 0; i < 26; i++)
-		cout << i << " -> " << volgende[i] << endl;
+		cout << (char)(i + 'A') << " -> " << (char)(volgende[i] + 'A') << endl;
 
 	char derde_woord[max + 1];// = { '\0' };
 	memset(derde_woord, eerste_kar, min * sizeof(char));
@@ -472,19 +481,19 @@ int Lettersom::construeerpuzzels(char *woord0, char *woord1) {
 	int woorden = 0;
 	int goede_woorden = 0;
 	do {
-		if((++woorden % 1000) == 0) {
-			cout << woorden << " mogelijkheden bekeken." << endl;
-			cout << goede_woorden << " keer naar een unieke oplossing gezocht." << endl;
-			cout << oplossingen << " oplossingen gevonden." << endl;
-		}
-		//cout << derde_woord << endl;
+
 		// Wordt alleen als een oplossing gezien als de vrije karakters
 		// in een oplopende volgorde staan. Zie 'Het is de bedoeling dat...'
 		// in de opdracht.
 		if(!vrije_karakters_goede_volgorde(derde_woord, vrij_karakter)) continue;
-		goede_woorden++;
-		if(zoekoplossingen(woord0, woord1, derde_woord) == 1) oplossingen++;
-    } while(volgend_woord(derde_woord, volgende, max));
+
+		if(zoekoplossingen(woord0, woord1, derde_woord, true) == 1) {
+		    
+		    cout << derde_woord << " is een oplossing" << endl;
+		    oplossingen++;
+		}
+
+    } while(volgend_woord(derde_woord, eerste_kar, volgende, max));
     
     return oplossingen;
 }

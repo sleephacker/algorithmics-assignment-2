@@ -30,7 +30,7 @@ public:
 	// Pre:
 	// * nwoord0 en nwoord1 zijn even lang en bevatten elk hoogstens
 	//   maxwoordlengte karakters
-	int construeerpuzzels(char *nwwoord0, char *nwwoord1);
+	int construeerpuzzels(char const *nwwoord0, char const *nwwoord1);
 
 private:
 	// TODO: uw eigen private methoden en membervariabelen,
