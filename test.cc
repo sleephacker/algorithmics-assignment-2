@@ -2,8 +2,8 @@ class Lettersom {
 public:
 	Lettersom();
 
-	int zoekoplossingen(char const *nwwoord0, char const *nwwoord1, char const *nwwoord2);
-	int construeerpuzzels(char *nwwoord0, char *nwwoord1);
+	int zoekoplossingen(char const *nwwoord0, char const *nwwoord1, char const *nwwoord2, bool stop = false);
+	int construeerpuzzels(char const *nwwoord0, char const *nwwoord1);
 };
 
 #define LettersomHVar
@@ -113,12 +113,17 @@ void zoek_oplossingen_test() {
 
         Lettersom l;
 
+        /*
         cout << "SINT + PIET = FEEST" << endl;
         cout << l.zoekoplossingen("SINT", "PIET", "FEEST")  << " oplossingen" << endl;
         cout << "SINT + PIET = RUZIE" << endl;
         cout << l.zoekoplossingen("SINT", "PIET", "RUZIE")  << " oplossingen" << endl;
         cout << "HEAD +  TOE = WAIST" << endl;
         cout << l.zoekoplossingen("HEAD", "TOE", "WAIST")  << " oplossingen" << endl;
+        cout << "ELF +  ELF = FEE" << endl;
+        */
+
+        cout << l.zoekoplossingen("ELF", "ELF", "FEE")  << " oplossingen" << endl;
 
 }
 
@@ -189,9 +194,20 @@ void toekenning_is_oplossing_test() {
 
 	for(int i = 0; i < 26; i++)
 		toekenning[i] = -1;
+
 	toekenning['E' - 'A'] = 2;
 	toekenning['T' - 'A'] = 6;
 	assert(!toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+
+    for(int i = 0; i < 26; i++)
+		toekenning[i] = -1;
+    
+    toekenning['F' - 'A'] = 3;
+    toekenning['E' - 'A'] = 6;
+    toekenning['L' - 'A'] = 8;
+
+    assert(!toekenning_is_oplossing("ELF", "ELF", "FEE", toekenning, geldig));
+
 	assert(geldig);
 }
 
@@ -230,7 +246,8 @@ int main() {
     //bepaal_beschikbare_karakters_test();
     //zoek_oplossingen_test();
     //construeer_volgende_tabel_test();
-    vrije_karakters_goede_volgorde_test();
+    //vrije_karakters_goede_volgorde_test();
+    toekenning_is_oplossing_test();
 
     return 0;
 }
