@@ -44,8 +44,7 @@ bool lengtes_kloppen(char const *woord0, char const *woord1, char const *woord2)
 
 
 void voeg_toe_aan_sleutel(string &sleutel, char const *woord, int index) {
-    if(index >= 0)
-		if(sleutel.find(woord[index]) == string::npos)
+    if(index >= 0 && sleutel.find(woord[index]) == string::npos)
 			sleutel.push_back(woord[index]);
 }
 
@@ -70,9 +69,7 @@ string bepaal_sleutel(char const *woord0, char const *woord1, char const *woord2
     return sleutel;
 }
 
-void print_getal(
-        int toekenning[26],
-        const char *woord0) {
+void print_getal(int toekenning[26], const char *woord0) {
 
     for(int i = 0; i < (int)strlen(woord0); i++) {
 
@@ -188,57 +185,6 @@ bool volgende_toekenning(int toekenning[26], string sleutel, bool geldig) {
     else return vervang_toegekend(toekenning, sleutel);
 }
 
-// decimale optelling
-vector<int> operator + (const vector<int> a, const vector<int> b) {
-	vector<int> c = vector<int>();
-	int carry = 0;
-	auto i_a = a.rbegin(), i_b = b.rbegin();
-	while(i_a != a.rend() || i_b != b.rend() || carry != 0) {
-		int av = (i_a != a.rend() ? *i_a : 0);
-		int bv = (i_b != b.rend() ? *i_b : 0);
-
-		int v = av + bv + carry;
-		carry = v >= 10 ? 1 : 0;
-		c.insert(c.begin(), v % 10);
-
-		if(i_a != a.rend()) ++i_a;
-		if(i_b != b.rend()) ++i_b;
-	}
-	return c;
-}
-
-// telt hoeveel letters van achteren kloppen (d.w.z. hoeveel er niet definitief niet kloppen)
-int letters_goed(char const *woord2, vector<int> cijfers2, int toekenning[26]) {
-
-	int tmp_toekenning[26];
-	memcpy(tmp_toekenning, toekenning, 26 * sizeof(int));
-
-	int len = strlen(woord2);
-	int i = len - 1;
-	int aantal = 0;
-	for(auto c = cijfers2.rbegin(); c != cijfers2.rend(), i >= 0; ++c, i--, aantal++) {
-		if(tmp_toekenning[woord2[i] - 'A'] == -1) {
-			for(int j = 0; j < 26; j++)
-				if(toekenning[j] == *c) // een andere letter heeft dit getal al
-					return aantal;
-			tmp_toekenning[woord2[i] - 'A'] = *c; // ken dit getal toe aan deze letter en kijk verder
-		}
-		else if(tmp_toekenning[woord2[i] - 'A'] != *c)
-			return aantal;
-	}
-	return aantal;
-}
-
-
-// maakt vanaf achteren cijfers van een woord, en stopt
-// bij de eerste letter waar nog geen toekenning voor is
-vector<int> geef_cijfers(char const *woord, int toekenning[26]) {
-	vector<int> cijfers = vector<int>();
-	for(int i = strlen(woord) - 1; i >= 0  && toekenning[woord[i] - 'A'] != -1; i--)
-		cijfers.insert(cijfers.begin(), toekenning[woord[i] - 'A']);
-	return cijfers;
-}
-
 bool toekenning_is_oplossing(
         char const *woord0,
         char const *woord1,
@@ -249,9 +195,7 @@ bool toekenning_is_oplossing(
         int toekenning[26],
         bool &geldig) {
 
-	/*if(len2 > len0 || len2 > len1)
-		if(toekenning[woord2[0] - 'A'] != 1 && toekenning[woord2[0] - 'A'] != -1)
-			return geldig = false;*/
+    // Voorloopnullen verboden
 	if(toekenning[woord0[0] - 'A'] == 0) return geldig = false;
 	if(toekenning[woord1[0] - 'A'] == 0) return geldig = false;
 	
@@ -300,23 +244,6 @@ bool toekenning_is_oplossing(
     bool voorloop2 = temp_toekenning[woord2[0] - 'A'] == 0;
 
     return oplossing && (geldig = !voorloop2);
-}
-
-int woord_naar_getal(char const* woord, int toekenning[26]) {
-
-    int getal = 0;
-    int len = strlen(woord);
-
-    for(int i = 0; i < len; i++) {
-
-        int t = toekenning[woord[i] - 'A'];
-        if(t == -1) return getal;
-
-        getal *= 10;
-        getal += t;
-    }
-
-    return getal;
 }
 
 // 'stop' dan wordt er gestopt als er meer dan een oplossing wordt gevonden.
