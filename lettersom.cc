@@ -263,9 +263,7 @@ bool toekenning_is_oplossing(
     }
 
     // Een 'carry' over de rand maakt de oplossing niet
-    // definitief ongeldig?
-    geldig = true;
-
+    // definitief ongeldig.
     // Maar zorgt er wel voor dat de oplossing incompleet is.
     oplossing = oplossing && carry == 0;
 
