@@ -58,11 +58,12 @@ string bepaal_sleutel(char const *woord0, char const *woord1, char const *woord2
 	int i1 = strlen(woord1) - 1; // maar de woorden zijn klein dus maakt dat niet uit.
 	int i2 = strlen(woord2) - 1;
     
-    while(i0 >= 0 || i1 >= 0 || i2 >= 0) {
+	int min_i2 = (i2 > i0 && 2 > i1) ? 1 : 0;
+    while(i0 >= 0 || i1 >= 0 || i2 >= min_i2) {
         
         voeg_toe_aan_sleutel(sleutel, woord0, i0); 
         voeg_toe_aan_sleutel(sleutel, woord1, i1); 
-        voeg_toe_aan_sleutel(sleutel, woord2, i2); 
+        if(i2 >= min_i2) voeg_toe_aan_sleutel(sleutel, woord2, i2); 
         i0--;
         i1--;
         i2--;
@@ -250,9 +251,9 @@ bool toekenning_is_oplossing(
         int toekenning[26],
         bool &geldig) {
 
-	if(len2 > len0 || len2 > len1)
+	/*if(len2 > len0 || len2 > len1)
 		if(toekenning[woord2[0] - 'A'] != 1 && toekenning[woord2[0] - 'A'] != -1)
-			return geldig = false;
+			return geldig = false;*/
 	if(toekenning[woord0[0] - 'A'] == 0) return geldig = false;
 	if(toekenning[woord1[0] - 'A'] == 0) return geldig = false;
 	
@@ -344,6 +345,8 @@ int Lettersom::zoekoplossingen(char const *woord0,
     int oplossingen = 0;
     int toekenning[26];
     memset(toekenning, -1, 26 * sizeof(int));
+	if(len2 > len0 && len2 > len1)
+		toekenning[woord2[0] - 'A'] = 1;
 
     bool geldig = true;
 
