@@ -23,7 +23,8 @@ void assert(bool condition) {
 void bepaal_sleutel_test() {
 
     string sleutel = bepaal_sleutel("SINT", "PIET", "FEEST");
-    assert(sleutel == "TNESIPF");
+    assert(sleutel == "TNESIP");
+	cout << sleutel << endl;
 
     sleutel = bepaal_sleutel("AAP", "BEER", "BUREAU");
     assert(sleutel == "PRUAEB");

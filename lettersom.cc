@@ -285,19 +285,21 @@ int Lettersom::zoekoplossingen(char const *woord0,
         char const *woord1,
         char const *woord2,
         bool stop) {
+	
+	if(!stop) { // als stop == true, dan worden de woorden door een functie aangeleverd die dit al gecheckt heeft
+		if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
 
-    if(!lengtes_kloppen(woord0, woord1, woord2)) return 0;
+		if(!geldig_woord(woord0)
+			|| !geldig_woord(woord1)
+			|| !geldig_woord(woord2)) {
 
-    if(!geldig_woord(woord0)
-            || !geldig_woord(woord1)
-            || !geldig_woord(woord2)) {
-
-        cout << "De ingevoerde woorden zijn ongeldig.. heeft u enkel hoofdletters gebruikt?" << endl;
-        return 0;
-    }
+			cout << "De ingevoerde woorden zijn ongeldig.. heeft u enkel hoofdletters gebruikt?" << endl;
+			return 0;
+		}
+	}
 
 	string sleutel = bepaal_sleutel(woord0, woord1, woord2);
-	if(sleutel.length() > 10) {
+	if(!stop && sleutel.length() > 10) {
 		cout << "De ingevoerde woorden bevatten meer dan 10 verschillende letters" << endl;
 		return 0;
 	}
