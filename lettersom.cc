@@ -263,9 +263,19 @@ int Lettersom::zoekoplossingen(char const *woord0,
         return 0;
     }
 
+	int len0 = strlen(woord0), len1 = strlen(woord1), len2 = strlen(woord2);
+
+	if(len0 == 1 && len1 == 1 && len2 == 1) {
+		if(woord0[0] == woord2[0] && woord1[0] != woord2[0])
+			return 9;
+		if(woord1[0] == woord2[0] && woord0[0] != woord2[0])
+			return 9;
+		if(woord0[0] == woord2[0] && woord1[0] == woord2[0])
+			return 1;
+	}
+
     // Zie implementatie.md
     string sleutel = bepaal_sleutel(woord0, woord1, woord2);
-    int len0 = strlen(woord0), len1 = strlen(woord1), len2 = strlen(woord2);
 
     int oplossingen = 0;
     int toekenning[26];
