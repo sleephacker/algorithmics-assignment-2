@@ -226,8 +226,8 @@ bool toekenning_is_oplossing(
         bool &geldig) {
 
     // Voorloopnullen verboden
-	if(toekenning[woord0[0] - 'A'] == 0) return geldig = false;
-	if(toekenning[woord1[0] - 'A'] == 0) return geldig = false;
+	if(len0 > 1 && toekenning[woord0[0] - 'A'] == 0) return geldig = false;
+	if(len1 > 1 && toekenning[woord1[0] - 'A'] == 0) return geldig = false;
 	
 	bool oplossing = true;
     int temp_toekenning[26];
@@ -270,7 +270,7 @@ bool toekenning_is_oplossing(
 
     // Een voorloop nul voor woord2 maakt de oplossing
     // wel definitief ongeldig.
-    bool voorloop2 = temp_toekenning[woord2[0] - 'A'] == 0;
+    bool voorloop2 = len2 > 1 && temp_toekenning[woord2[0] - 'A'] == 0;
     geldig = !voorloop2;
 
     return oplossing && !voorloop2;
