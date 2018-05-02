@@ -1,0 +1,77 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath}
+
+\usepackage{setspace}
+
+\usepackage{listings}
+\usepackage{color}
+\definecolor{commentc}{rgb}{0, 0.5, 0}
+\definecolor{stringc}{rgb}{0.5, 0.1, 0}
+\definecolor{keywordc}{rgb}{0, 0.25, 1}
+\definecolor{linenumc}{rgb}{0.5, 0.5, 0.5}
+\lstset{language=C++, showstringspaces=false, basicstyle={\small \ttfamily},
+  numbers=left, numberstyle={\small \color{linenumc} \ttfamily}, numberfirstline=false, breaklines=true,
+  stepnumber=1, tabsize=4, 
+  commentstyle=\color{commentc},
+  stringstyle=\color{stringc}, keywordstyle=\color{keywordc}
+}
+
+
+\renewcommand{\baselinestretch}{1.25} 
+\usepackage[
+    top    = 1.5cm,
+    bottom = 4cm,
+    left   = 3.00cm,
+    right  = 2.50cm]{geometry}
+    
+\title{Algoritmiek - Programmeeropdracht Twee}
+\author{Jelle van Cappelle \and L\'eon van Velzen}
+\date{May 2018}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+Lettersom-puzzels zijn puzzels die bestaan uit drie woorden. Een oplossing van de puzzel is een toekenning van een cijfer aan een karakter op zo\'n manier, dat de som van de eerste twee woorden gelijk is aan het derde woord. Verschillende cijfers moeten aan verschillende letters worden toegekend, en omgekeerd.
+
+Voor de puzzel SINT + PIET = FEEST is er een unieke oplossing: T = 0, N = 5, E = 2, S = 7, I = 6, P = 4, F = 1. Deze toekenning leidt tot de som $7650 + 4620 = 12270$.
+
+\section{Zoeken van oplossingen}
+
+Het bijbehorende programma bevat een functie 'zoekoplossingen' die de hoeveelheid mogelijke oplossingen voor een lettersom-puzzel berekent. Allereerst bepalen we in welke volgorde we de karakters een cijfer moeten toekennen. Hierbij geldt dat we achterin de woorden beginnen. Dit doen we omdat we op deze manier het begin van de som kunnen berekenen, en hierdoor mogelijk een gedeeltelijke toekenning ongeldig kunnen verklaren. De volgorde moet alle verschillende karakters bevatten. In het voorbeeld SINT + PIET = FEEST is de volgorde dus TNESIPF. De rij met getallen die aan deze voorwaarden voldoet noemen we een \textbf{sleutel}. Een oplossing van de puzzel is een complete toekenning van getallen aan de sleutel, waarbij de puzzel klopt. Om deze te vinden lopen we van links naar rechts over de sleutel en kennen een getal toe aan elk karakter. Op het moment dat een gedeeltelijke toekenning de puzzel ongeldig maakt, geven we het huidige karakter het volgende cijfer, zonder de rest van de karakters een getal toe te kennen. Het ongeldig maken van de toekenning houdt in dat er een tegenstrijdigheid ontstaat bij het toekennen van de som aan het derde woord. Zo is de toekenning T = 8 ongeldig in het voorbeeld SINT + PIET = FEEST, aangezien de T in de uitkomst de waarde 6 zou moeten aannemen. Het kan zijn dat het huidige karakter geen volgend cijfer kan aannemen, omdat alle getallen vanaf het huidige getal tot en met negen al in gebruik zijn. In dat geval vindt er \b{backtracking} plaats waarbij de toekenning van het huidige karakter ongedaan wordt gemaakt en er een volgend getal wordt gezocht voor het vorige karakter.
+
+\section{Construeren van puzzels}
+
+Verder bevat het bijbehorende programma een functie om puzzels te construeren voor de som van twee woorden waarvoor geldt dat er maar \'e\'en oplossing is. De functie retourneert de hoeveelheid gevonden puzzels. Allereerst bepaalt de functie hoeveel vrije karakters er toegevoegd moeten worden aan de puzzel, aangezien niet alle karakters in een puzzel voor hoeven te komen in de eerste twee woorden. Dit kunnen er in ieder geval niet meer zijn dan $10 - \text{lengte van sleutel}$ aangezien er maar 10 cijfers beschikbaar zijn. Verder kunnen dit er ook niet meer zijn dan $\text{max(lengte(woord1), lengte(woord2))} + 1$ aangezien de som van de twee woorden maar \'e\'en cijfer langer kan zijn dan de maximale lengte van de eerste twee woorden.
+
+De eerste karakters in het alfabet die geen onderdeel uitmaken van de sleutel worden verkozen als vrije karakters. Vervolgens worden alle mogelijke combinaties gegenereerd van de vrije karakters en de karakters in de sleutel. Met behulp van de vorige functie wordt bekeken of er voor de bijbehorende puzzel maar \'e\'en oplossing is.
+
+Tenslotte moeten we ervoor zorgen dat de vrije karakters er niet voor zorgen dat er puzzels dubbel worden geteld. Een puzzel dat twee vrije karakters bevat kan identiek beschouwd worden aan de puzzel waarbij deze twee vrije karakters zijn omgewisseld. Om deze reden moeten de vrije karakters in de volgorde van het alfabet staan, waarbij verder geldt dat er geen vrije karakters worden overgeslagen. Op deze manier worden de puzzel met als derde woord 'ABB' en 'ACC' niet dubbel geteld, in het geval dat B en C vrij zijn.
+
+\section{Vragen}
+
+\begin{itemize}
+  \item Het toevoegen van A mag B niet veranderen, er geldt dus $A = 0$. Er zijn dus 9 oplossingen aangezien B de cijfers 0 tot en met 9 kan aannemen.
+  \item Aangezien C en D vrije karakaters zijn, geldt A + B = CD voor alle toekenning waarbij A < B. Oftewel $9 + 8 + 7 ... = 45$.
+\end{itemize}
+
+\section{main.cc}
+
+\lstinputlisting{main.cc}
+
+\section{lettersom.h}
+
+\lstinputlisting{lettersom.h}
+
+\section{lettersom.cc}
+
+\lstinputlisting{lettersom.cc}
+
+\end{document}
