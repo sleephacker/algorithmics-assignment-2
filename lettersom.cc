@@ -30,8 +30,6 @@ bool geldig_woord(char const *w) {
 
 bool lengtes_kloppen(char const *woord0, char const *woord1, char const *woord2) {
     
-    // TODO: hoogstens tien verschillende hoofdletters
-
     int len0 = strlen(woord0);
 	int len1 = strlen(woord1);
 	int len2 = strlen(woord2);
@@ -132,7 +130,7 @@ int volgend_getal(int toekenning[26], int hoger_dan) {
 
 // Update een al toegekend karakter. Zo mogelijk krijgt het
 // laatste toegekende karakter een ander getal. Als het laatste karakter
-// alle mogelijke getallen al heeft aangenomen, update dan het één na laatste
+// alle mogelijke getallen al heeft aangenomen, update dan het een na laatste
 // karakter. Als het eerste karakter alle mogelijke waardes al heeft aangenomen,
 // geef dan false terug.
 bool vervang_toegekend(int toekenning[26], string sleutel) {
@@ -159,7 +157,7 @@ bool vervang_toegekend(int toekenning[26], string sleutel) {
         }
     }
     
-    // Bovenstaande loop wordt altijd met een return beëindigd, dus
+    // Bovenstaande loop wordt altijd met een return beeindigd, dus
     // deze regel is onbereikbaar.
 	cout << "Kan toegekende karakters niet updaten" << endl;
     throw std::invalid_argument("Kan toegekende karakters niet updaten");
@@ -316,7 +314,7 @@ int woord_naar_getal(char const* woord, int toekenning[26]) {
     return getal;
 }
 
-// 'stop' dan wordt er gestopt als er meer dan één oplossing wordt gevonden.
+// 'stop' dan wordt er gestopt als er meer dan een oplossing wordt gevonden.
 // De mogelijke resultaten zijn in dat geval dus 0, 1, 2
 int Lettersom::zoekoplossingen(char const *woord0,
         char const *woord1,
