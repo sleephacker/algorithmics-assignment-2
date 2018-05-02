@@ -71,14 +71,30 @@ string bepaal_sleutel(char const *woord0, char const *woord1, char const *woord2
     return sleutel;
 }
 
+void print_getal(
+        int toekenning[26],
+        const char *woord0) {
+
+    for(int i = 0; i < (int)strlen(woord0); i++) {
+
+        int cijfer = toekenning[woord0[i] - 'A'];
+
+        if(cijfer == -1) cout << '_';
+        else cout << cijfer;
+    }
+
+}
+
+
 void print_toekenning(
         int toekenning[26], 
-        string sleutel,
         const char *woord0, 
         const char *woord1,
         const char *woord2) {
     
     cout << "=============================================================" << endl;
+
+    string sleutel = bepaal_sleutel(woord0, woord1, woord2);
 
     for(int i = 0; i < (int)sleutel.length(); i++) {
         cout << sleutel[i] << ":";
@@ -87,11 +103,11 @@ void print_toekenning(
 
     cout << endl;
 
-    for(int i = 0; i < (int)strlen(woord0); i++) cout << toekenning[woord0[i] - 'A'];
+    print_getal(toekenning, woord0);
     cout << " + ";
-    for(int i = 0; i < (int)strlen(woord1); i++) cout << toekenning[woord1[i] - 'A'];
+    print_getal(toekenning, woord1);
     cout << " = ";
-    for(int i = 0; i < (int)strlen(woord2); i++) cout << toekenning[woord2[i] - 'A'];
+    print_getal(toekenning, woord2);
     cout << endl;
 }
 
@@ -308,7 +324,7 @@ int Lettersom::zoekoplossingen(char const *woord0,
         if(is_oplossing) {
             oplossingen += 1;
 
-            if(!stop) print_toekenning(toekenning, sleutel, woord0, woord1, woord2);
+            if(!stop) print_toekenning(toekenning, woord0, woord1, woord2);
             if(stop && oplossingen > 1) return oplossingen;
         }
     }
