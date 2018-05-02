@@ -267,10 +267,12 @@ bool toekenning_is_oplossing(
     // Maar zorgt er wel voor dat de oplossing incompleet is.
     oplossing = oplossing && carry == 0;
 
-    // Bekijk verder de voorloopnullen..
+    // Een voorloop nul voor woord2 maakt de oplossing
+    // wel definitief ongeldig.
     bool voorloop2 = temp_toekenning[woord2[0] - 'A'] == 0;
+    geldig = !voorloop2;
 
-    return oplossing && (geldig = !voorloop2);
+    return oplossing && !voorloop2;
 }
 
 // Zie opdracht. Vind de hoeveelheid oplossingen
