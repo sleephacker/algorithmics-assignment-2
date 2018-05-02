@@ -228,18 +228,14 @@ bool toekenning_is_oplossing(
     // Voorloopnullen verboden
 	if(toekenning[woord0[0] - 'A'] == 0) return geldig = false;
 	if(toekenning[woord1[0] - 'A'] == 0) return geldig = false;
-	
-	bool oplossing = true;
-    int temp_toekenning[26];
-    memcpy(temp_toekenning, toekenning, 26 * sizeof(int));
 
     int i0 = len0 - 1,  i1 = len1 - 1, i2 = len2 - 1;
     int carry = 0;
 
     for(;i2 >= 0; i0--, i1--, i2--) {
 
-        int getal0 = i0 < 0 ? 0 : temp_toekenning[woord0[i0] - 'A'];
-        int getal1 = i1 < 0 ? 0 : temp_toekenning[woord1[i1] - 'A'];
+        int getal0 = i0 < 0 ? 0 : toekenning[woord0[i0] - 'A'];
+        int getal1 = i1 < 0 ? 0 : toekenning[woord1[i1] - 'A'];
 
         if(getal0 == -1 || getal1 == -1) {
             
@@ -255,25 +251,28 @@ bool toekenning_is_oplossing(
 
         carry = sum >= 10;
 
-        if(temp_toekenning[kar2] == -1) {
+        if(toekenning[kar2] == -1) {
             
-            temp_toekenning[kar2] = getal2;
-            oplossing = false; // Incompleet, dus geen oplossing
+            for(int i = 0; i < 26; i++) {
+                if(toekenning[i] == getal2 && i != kar2) return geldig = false;
+            }
+
+            toekenning[kar2] = getal2;
         }
-        else if(temp_toekenning[kar2] != getal2) return geldig = false;
+        else if(toekenning[kar2] != getal2) return geldig = false;
     }
 
     // Een 'carry' over de rand maakt de oplossing niet
     // definitief ongeldig.
     // Maar zorgt er wel voor dat de oplossing incompleet is.
-    oplossing = oplossing && carry == 0;
-
+    //
     // Een voorloop nul voor woord2 maakt de oplossing
     // wel definitief ongeldig.
-    bool voorloop2 = temp_toekenning[woord2[0] - 'A'] == 0;
+    bool voorloop2 = toekenning[woord2[0] - 'A'] == 0;
+
     geldig = !voorloop2;
 
-    return oplossing && !voorloop2;
+    return carry == 0 && geldig;
 }
 
 // Zie opdracht. Vind de hoeveelheid oplossingen
@@ -324,9 +323,9 @@ int Lettersom::zoekoplossingen(char const *woord0,
         if(!gelukt) return oplossingen;
 
         bool is_oplossing = toekenning_is_oplossing(woord0, woord1, woord2, len0, len1, len2, toekenning, geldig);
+        is_oplossing = toekenning_is_oplossing(woord0, woord1, woord2, len0, len1, len2, toekenning, geldig);
 
         if(is_oplossing) {
-            //print_toekenning(toekenning, woord0, woord1, woord2);
             oplossingen += 1;
 
             if(stop && oplossingen > 1) return oplossingen;
@@ -531,8 +530,10 @@ int Lettersom::construeerpuzzels(char const *woord0, char const *woord1) {
 	int oplossingen = 0;
 	int woorden = 0;
 	do {
-		if(++woorden % 10000 == 0)
+		if(++woorden % 10000 == 0) {
 			cout << woorden << " woorden bekeken, " << oplossingen << " oplossingen gevonden." << endl;
+
+		}
 
 		// Wordt alleen als een oplossing gezien als de vrije karakters
 		// in een oplopende volgorde staan. Zie 'Het is de bedoeling dat...'
@@ -541,7 +542,6 @@ int Lettersom::construeerpuzzels(char const *woord0, char const *woord1) {
 
 		if(zoekoplossingen(woord0, woord1, derde_woord, true) == 1) {
 		    
-		    //cout << derde_woord << " is een oplossing" << endl;
 		    oplossingen++;
 		}
 

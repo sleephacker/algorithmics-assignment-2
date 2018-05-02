@@ -23,7 +23,7 @@ void assert(bool condition) {
 void bepaal_sleutel_test() {
 
     string sleutel = bepaal_sleutel("SINT", "PIET", "FEEST");
-    assert(sleutel == "TNESIPF");
+    assert(sleutel == "TNESIP");
 
     sleutel = bepaal_sleutel("AAP", "BEER", "BUREAU");
     assert(sleutel == "PRUAEB");
@@ -137,6 +137,10 @@ void zoek_oplossingen_test() {
 
         cout << "ELF + ELF = AFAB" << endl;
         cout << l.zoekoplossingen("ELF", "ELF", "AFAB")  << " oplossingen" << endl;
+
+        cout << "LEI + DEN = EIDA" << endl;
+        cout << l.zoekoplossingen("LEI", "DEN", "EIDA")  << " oplossingen" << endl;
+
 }
 
 bool toekenning_is_oplossing_len(
@@ -160,6 +164,7 @@ void toekenning_is_oplossing_test() {
 	int toekenning[26];
 	bool geldig;
 
+    /*
 	char woord0[5] = "SINT";
 	char woord1[5] = "PIET";
 	char woord2[6] = "RUZIE";
@@ -273,6 +278,22 @@ void toekenning_is_oplossing_test() {
 
     assert(!toekenning_is_oplossing_len("ELF", "ELF", "AFAB", toekenning, geldig));
     assert(geldig);
+ 
+    */
+
+    for(int i = 0; i < 26; i++)
+		toekenning[i] = -1;
+    
+    toekenning['I' - 'A'] = 2;
+    toekenning['N' - 'A'] = 8;
+    toekenning['A' - 'A'] = 0;
+    toekenning['E' - 'A'] = 1;
+    toekenning['D' - 'A'] = 3;
+    toekenning['L' - 'A'] = 9;
+
+    assert(toekenning_is_oplossing_len("LEI", "DEN", "EIDA", toekenning, geldig));
+    assert(geldig);
+
 }
 
 
@@ -310,9 +331,10 @@ int main() {
     volgende_toekenning_test();
     bepaal_beschikbare_karakters_test();
     zoek_oplossingen_test();
+
     construeer_volgende_tabel_test();
     vrije_karakters_goede_volgorde_test();
-    toekenning_is_oplossing_test();
+   toekenning_is_oplossing_test();
 
     return 0;
 }
