@@ -271,7 +271,7 @@ void toekenning_is_oplossing_test() {
     toekenning['A' - 'A'] = -1;
     toekenning['E' - 'A'] = -1;
 
-    assert(!toekenning_is_oplossing("ELF", "ELF", "AFAB", toekenning, geldig));
+    assert(!toekenning_is_oplossing_len("ELF", "ELF", "AFAB", toekenning, geldig));
     assert(geldig);
 }
 
