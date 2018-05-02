@@ -55,7 +55,8 @@ string bepaal_sleutel(char const *woord0, char const *woord1, char const *woord2
 	int i1 = strlen(woord1) - 1; // maar de woorden zijn klein dus maakt dat niet uit.
 	int i2 = strlen(woord2) - 1;
     
-	int min_i2 = (i2 > i0 && 2 > i1) ? 1 : 0;
+	// voeg alles aan de sleutel toe, behalve het eerste karakter indien deze altijd 1 moet zijn
+	int min_i2 = (i2 > i0 && i2 > i1) ? 1 : 0;
     while(i0 >= 0 || i1 >= 0 || i2 >= min_i2) {
         
         voeg_toe_aan_sleutel(sleutel, woord0, i0); 
