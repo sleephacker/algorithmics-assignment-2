@@ -365,8 +365,8 @@ void bepaal_beschikbare_karakters(
         bool vrij_karakter[26],
         char const *woord0,
         char const *woord1,
-        int min,
-        int max) {
+        int min_kars,
+        int max_kars) {
 
     // Unieke karakters
     string sleutel = bepaal_sleutel(woord0, woord1, "");
@@ -378,7 +378,7 @@ void bepaal_beschikbare_karakters(
     // even veel vrije karakters nodig als dat er cijfers in het resultaat staan.
     // Aangezien het resultaat maximaal lengte 'max' heeft, is dit het mogelijk
     // aantal vrije karakters.
-    int vrije_karakters = max;
+    int vrije_karakters = min(max_kars, 10 - sleutel.length());
 
     cout << "Aantal vrije karakters is " << vrije_karakters << endl;
 
