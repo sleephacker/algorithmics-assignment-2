@@ -72,9 +72,10 @@ void construeerpuzzels() {
 	int len0, len1,
 		nrpuzzels;
 
+#define test_construeer
 #ifdef test_construeer
-	char const* woord0 = "ELF";
-	char const* woord1 = "ELF";
+	char const* woord0 = "SINT";
+	char const* woord1 = "PIET";
 #else
 	char woord0[maxwoordlengte + 1], woord1[maxwoordlengte + 1];
 
@@ -116,7 +117,7 @@ void construeerpuzzels() {
 //*************************************************************************
 
 void hoofdmenu() {
-#ifdef test_contrueer
+#ifdef test_construeer
     construeerpuzzels();
 #else
 	int keuze;
