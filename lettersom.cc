@@ -23,6 +23,7 @@ bool geldig_woord(char const *w) {
     int len = strlen(w);
 
     if(len == 0) return false;
+    if(len > 20) return false;
     for(int i = 0; i < len; i++) if(!is_hoofdletter(w[i])) return false;
 
     return true;
@@ -36,9 +37,6 @@ bool lengtes_kloppen(char const *woord0, char const *woord1, char const *woord2)
 
 	if(max(len0, len1) > len2 || max(len0, len1) < (len2 - 1)) return false;
 
-    // Volgens de opdracht: hoogstens 20 karakters
-	if(len0 > 20 || len1 > 20 || len2 > 20) return false;
-    
     return true;
 }
 
