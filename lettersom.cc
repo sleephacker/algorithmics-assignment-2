@@ -128,7 +128,7 @@ int volgend_getal(int toekenning[26], int hoger_dan) {
     }
 
     return -1; // Niet gevonden
-}
+} 
 
 // Update een al toegekend karakter. Zo mogelijk krijgt het
 // laatste toegekende karakter een ander getal. Als het laatste karakter
@@ -240,33 +240,63 @@ vector<int> geef_cijfers(char const *woord, int toekenning[26]) {
 	return cijfers;
 }
 
-bool toekenning_is_oplossing(char const *woord0,
+bool toekenning_is_oplossing(
+        char const *woord0,
         char const *woord1,
         char const *woord2, 
+        int len0,
+        int len1,
+        int len2,
         int toekenning[26],
         bool &geldig) {
 
-	vector<int> cijfers0 = geef_cijfers(woord0, toekenning);
-	vector<int> cijfers1 = geef_cijfers(woord1, toekenning);
-	
-	if(cijfers0[0] == 0 || cijfers1[0] == 0)
-		return geldig = false;
+    bool oplossing = true;
+    int temp_toekenning[26];
+    memcpy(temp_toekenning, toekenning, 26 * sizeof(int));
 
-	vector<int> cijfers2 = cijfers0 + cijfers1;
+    int i0 = len0 - 1,  i1 = len1 - 1, i2 = len2 - 1;
+    int carry = 0;
 
-	int n = letters_goed(woord2, cijfers2, toekenning);
-	geldig = n >= (int)min(cijfers0.size(), cijfers1.size());
+    for(;i2 >= 0; i0--, i1--, i2--) {
 
-	if(cijfers2[0] == 0 || cijfers2.size() != strlen(woord2))
-		return false;
-	if(n != (int)strlen(woord2) || cijfers0.size() != strlen(woord0) || cijfers1.size() != strlen(woord1))
-		return false;
-	else {
-		for(int i = 0; i < (int)strlen(woord2); i++)
-			if(toekenning[woord2[i] - 'A'] == -1)
-				return false;
-		return true;
-	}
+        int getal0 = i0 < 0 ? 0 : temp_toekenning[woord0[i0] - 'A'];
+        int getal1 = i1 < 0 ? 0 : temp_toekenning[woord1[i1] - 'A'];
+
+        if(getal0 == -1 || getal1 == -1) {
+            
+            geldig = true;
+            return false;
+        }
+
+        int sum = getal0 + getal1 + carry;
+        int kar2 = woord2[i2] - 'A';
+        int getal2 = sum % 10;
+
+        //cout << getal0 << "+" << getal1 << "+" << carry << "=" << sum << endl;
+
+        carry = sum >= 10;
+
+        if(temp_toekenning[kar2] == -1) {
+            
+            temp_toekenning[kar2] = getal2;
+            oplossing = false; // Incompleet, dus geen oplossing
+        }
+        else if(temp_toekenning[kar2] != getal2) return geldig = false;
+    }
+
+    // Een 'carry' over de rand maakt de oplossing niet
+    // definitief ongeldig?
+    geldig = true;
+
+    // Maar zorgt er wel voor dat de oplossing incompleet is.
+    oplossing = oplossing && carry == 0;
+
+    // Bekijk verder de voorloopnullen..
+    bool voorloop0 = temp_toekenning[woord0[0] - 'A'] == 0;
+    bool voorloop1 = temp_toekenning[woord1[0] - 'A'] == 0;
+    bool voorloop2 = temp_toekenning[woord2[0] - 'A'] == 0;
+
+    return oplossing && !voorloop0 && !voorloop1 && !voorloop2;
 }
 
 int woord_naar_getal(char const* woord, int toekenning[26]) {
@@ -305,8 +335,7 @@ int Lettersom::zoekoplossingen(char const *woord0,
 
     // Zie implementatie.md
     string sleutel = bepaal_sleutel(woord0, woord1, woord2);
-
-    //cout << sleutel << endl;
+    int len0 = strlen(woord0), len1 = strlen(woord1), len2 = strlen(woord2);
 
     int oplossingen = 0;
     int toekenning[26];
@@ -317,14 +346,15 @@ int Lettersom::zoekoplossingen(char const *woord0,
     while(true) {
         bool gelukt = volgende_toekenning(toekenning, sleutel, geldig);
 
+
         if(!gelukt) return oplossingen;
 
-        bool is_oplossing = toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig);
+        bool is_oplossing = toekenning_is_oplossing(woord0, woord1, woord2, len0, len1, len2, toekenning, geldig);
 
         if(is_oplossing) {
+            print_toekenning(toekenning, woord0, woord1, woord2);
             oplossingen += 1;
 
-            if(!stop) print_toekenning(toekenning, woord0, woord1, woord2);
             if(stop && oplossingen > 1) return oplossingen;
         }
     }
@@ -503,8 +533,8 @@ int Lettersom::construeerpuzzels(char const *woord0, char const *woord1) {
 	int oplossingen = 0;
 	int woorden = 0;
 	do {
-		if(++woorden % 10000 == 0)
-			cout << woorden << " woorden bekeken, " << oplossingen << " oplossingen gevonden." << endl;
+		if(++woorden > 200) return 0;
+			//cout << woorden << " woorden bekeken, " << oplossingen << " oplossingen gevonden." << endl;
 
 		// Wordt alleen als een oplossing gezien als de vrije karakters
 		// in een oplopende volgorde staan. Zie 'Het is de bedoeling dat...'

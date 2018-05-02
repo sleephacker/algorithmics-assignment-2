@@ -123,27 +123,43 @@ void zoek_oplossingen_test() {
 
         Lettersom l;
 
-        /*
         cout << "SINT + PIET = FEEST" << endl;
         cout << l.zoekoplossingen("SINT", "PIET", "FEEST")  << " oplossingen" << endl;
+
         cout << "SINT + PIET = RUZIE" << endl;
         cout << l.zoekoplossingen("SINT", "PIET", "RUZIE")  << " oplossingen" << endl;
+
         cout << "HEAD +  TOE = WAIST" << endl;
         cout << l.zoekoplossingen("HEAD", "TOE", "WAIST")  << " oplossingen" << endl;
+
         cout << "ELF +  ELF = FEE" << endl;
-
         cout << l.zoekoplossingen("ELF", "ELF", "FEE")  << " oplossingen" << endl;
-        */
 
+        cout << "ELF + ELF = AFAB" << endl;
         cout << l.zoekoplossingen("ELF", "ELF", "AFAB")  << " oplossingen" << endl;
-//        cout << l.zoekoplossingen("ELF", "ELF", "FEE")  << " oplossingen" << endl;
+}
 
+bool toekenning_is_oplossing_len(
+        char const *woord0,
+        char const *woord1,
+        char const *woord2, 
+        int toekenning[26],
+        bool &geldig) {
 
+    return toekenning_is_oplossing(woord0,
+            woord1,
+            woord2,
+            strlen(woord0),
+            strlen(woord1),
+            strlen(woord2),
+            toekenning,
+            geldig);
 }
 
 void toekenning_is_oplossing_test() {
 	int toekenning[26];
 	bool geldig;
+
 	char woord0[5] = "SINT";
 	char woord1[5] = "PIET";
 	char woord2[6] = "RUZIE";
@@ -160,7 +176,7 @@ void toekenning_is_oplossing_test() {
 	toekenning['T' - 'A'] = 2;
 	toekenning['U' - 'A'] = 0;
 	toekenning['Z' - 'A'] = 8;
-	assert(toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(toekenning_is_oplossing_len(woord0, woord1, woord2, toekenning, geldig));
 	assert(geldig);
 
 	toekenning['E' - 'A'] = 4;
@@ -172,7 +188,7 @@ void toekenning_is_oplossing_test() {
 	toekenning['T' - 'A'] = 2;
 	toekenning['U' - 'A'] = 0;
 	toekenning['Z' - 'A'] = 8;
-	assert(toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(toekenning_is_oplossing_len(woord0, woord1, woord2, toekenning, geldig));
 	assert(geldig);
 
 	toekenning['E' - 'A'] = 6;
@@ -184,7 +200,7 @@ void toekenning_is_oplossing_test() {
 	toekenning['T' - 'A'] = 3;
 	toekenning['U' - 'A'] = 2;
 	toekenning['Z' - 'A'] = 9;
-	assert(toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(toekenning_is_oplossing_len(woord0, woord1, woord2, toekenning, geldig));
 	assert(geldig);
 
 	toekenning['E' - 'A'] = 6;
@@ -196,14 +212,14 @@ void toekenning_is_oplossing_test() {
 	toekenning['T' - 'A'] = 3;
 	toekenning['U' - 'A'] = 2;
 	toekenning['Z' - 'A'] = 9;
-	assert(toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(toekenning_is_oplossing_len(woord0, woord1, woord2, toekenning, geldig));
 	assert(geldig);
 
 	for(int i = 0; i < 26; i++)
 		toekenning[i] = -1;
 	toekenning['E' - 'A'] = 5;
 	toekenning['T' - 'A'] = 3;
-	assert(!toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(!toekenning_is_oplossing_len(woord0, woord1, woord2, toekenning, geldig));
 	assert(!geldig);
 
 	for(int i = 0; i < 26; i++)
@@ -211,7 +227,7 @@ void toekenning_is_oplossing_test() {
 
 	toekenning['E' - 'A'] = 2;
 	toekenning['T' - 'A'] = 6;
-	assert(!toekenning_is_oplossing(woord0, woord1, woord2, toekenning, geldig));
+	assert(!toekenning_is_oplossing_len(woord0, woord1, woord2, toekenning, geldig));
 	assert(geldig);
 
     for(int i = 0; i < 26; i++)
@@ -221,7 +237,7 @@ void toekenning_is_oplossing_test() {
     toekenning['E' - 'A'] = 6;
     toekenning['L' - 'A'] = 8;
 
-    assert(!toekenning_is_oplossing("ELF", "ELF", "FEE", toekenning, geldig));
+    assert(!toekenning_is_oplossing_len("ELF", "ELF", "FEE", toekenning, geldig));
 	assert(geldig);
 
     for(int i = 0; i < 26; i++)
@@ -233,7 +249,7 @@ void toekenning_is_oplossing_test() {
     toekenning['A' - 'A'] = 1;
     toekenning['E' - 'A'] = 8;
 
-    assert(toekenning_is_oplossing("ELF", "ELF", "AFAB", toekenning, geldig));
+    assert(toekenning_is_oplossing_len("ELF", "ELF", "AFAB", toekenning, geldig));
 
     for(int i = 0; i < 26; i++)
 		toekenning[i] = -1;
@@ -244,7 +260,7 @@ void toekenning_is_oplossing_test() {
     toekenning['A' - 'A'] = 1;
     toekenning['E' - 'A'] = 9;
 
-    assert(toekenning_is_oplossing("ELF", "ELF", "AFAB", toekenning, geldig));
+    assert(toekenning_is_oplossing_len("ELF", "ELF", "AFAB", toekenning, geldig));
 
     for(int i = 0; i < 26; i++)
 		toekenning[i] = -1;
@@ -289,13 +305,13 @@ void vrije_karakters_goede_volgorde_test() {
 }
 
 int main() {
-    //bepaal_sleutel_test();
-    //volgend_getal_test();
-    //volgende_toekenning_test();
-    //bepaal_beschikbare_karakters_test();
-    //zoek_oplossingen_test();
-    //construeer_volgende_tabel_test();
-    //vrije_karakters_goede_volgorde_test();
+    bepaal_sleutel_test();
+    volgend_getal_test();
+    volgende_toekenning_test();
+    bepaal_beschikbare_karakters_test();
+    zoek_oplossingen_test();
+    construeer_volgende_tabel_test();
+    vrije_karakters_goede_volgorde_test();
     toekenning_is_oplossing_test();
 
     return 0;
