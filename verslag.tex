@@ -59,7 +59,7 @@ Tenslotte moeten we ervoor zorgen dat de vrije karakters er niet voor zorgen dat
 
 \begin{itemize}
   \item Het toevoegen van A mag B niet veranderen, er geldt dus $A = 0$. Er zijn dus 9 oplossingen aangezien B de cijfers 0 tot en met 9 kan aannemen.
-  \item Aangezien C en D vrije karakaters zijn, geldt A + B = CD voor alle toekenning waarbij A < B. Oftewel $9 + 8 + 7 ... = 45$.
+  \item Aangezien C en D vrije karakaters zijn, geldt A + B = CD voor alle toekenning waarbij $A < B$ en $A + B \ge 10$. Stel $A = 1$ dan moet $B = 9$. Stel nu dat $A = 2$ dan moet $B = 8 \lor B = 9$. Op deze manier kunnen we 14 verschillende paren vinden waarvoor geldt $A < B$.
 \end{itemize}
 
 \section{main.cc}

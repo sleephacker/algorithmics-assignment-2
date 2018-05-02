@@ -13,21 +13,28 @@ int min(int a, int b) { return a < b ? a : b; }
 
 Lettersom::Lettersom() {}
 
+// Bepaalt of karakter c een hoofdletter is
 bool is_hoofdletter(char c) {
 
     return c >= 65 && c <= 90;
 }
 
+// Bepaalt of het woord w geldig is, dat wil zeggen:
+// niet leeg, alleen maar hoofdletters, niet langer dan 20 karakters.
 bool geldig_woord(char const *w) {
 
     int len = strlen(w);
 
     if(len == 0) return false;
+    if(len > 20) return false;
     for(int i = 0; i < len; i++) if(!is_hoofdletter(w[i])) return false;
 
     return true;
 }
 
+// Bepaalt of door middel van de lengtes van de woorden kan worden
+// uitgesloten dat er een oplossing bestaat.
+// Parameters: de drie woorden van de puzzel woord0 + woord1 = woord2.
 bool lengtes_kloppen(char const *woord0, char const *woord1, char const *woord2) {
     
     int len0 = strlen(woord0);
@@ -36,18 +43,20 @@ bool lengtes_kloppen(char const *woord0, char const *woord1, char const *woord2)
 
 	if(max(len0, len1) > len2 || max(len0, len1) < (len2 - 1)) return false;
 
-    // Volgens de opdracht: hoogstens 20 karakters
-	if(len0 > 20 || len1 > 20 || len2 > 20) return false;
-    
     return true;
 }
 
-
+// Voeg een karakter uit 'woord' toe aan sleutel.
+// sleutel: de aan te passen sleutel
+// woord: het woord waarin zich het karakter bevindt
+// index: het index van het karakter in 'woord'
 void voeg_toe_aan_sleutel(string &sleutel, char const *woord, int index) {
     if(index >= 0 && sleutel.find(woord[index]) == string::npos)
 			sleutel.push_back(woord[index]);
 }
 
+// Bepaal de sleutel behorende tot de puzzel woord0 + woord1 = woord2.
+// Parameters: de drie woorden van de puzzel.
 string bepaal_sleutel(char const *woord0, char const *woord1, char const *woord2) {
 
     string sleutel;
@@ -70,6 +79,8 @@ string bepaal_sleutel(char const *woord0, char const *woord1, char const *woord2
     return sleutel;
 }
 
+// Print een woord in de vorm van het getal
+// volgens de toekenning, handig voor debuggen.
 void print_getal(int toekenning[26], const char *woord0) {
 
     for(int i = 0; i < (int)strlen(woord0); i++) {
@@ -82,7 +93,10 @@ void print_getal(int toekenning[26], const char *woord0) {
 
 }
 
-
+// Print de som zoals die eruit ziet volgens
+// de gegeven toekenning. Handig voor debuggen.
+// Parameters: de toekenning en de woorden van 
+// de puzzel woord0 + woord1 = woord2.
 void print_toekenning(
         int toekenning[26], 
         const char *woord0, 
@@ -108,7 +122,9 @@ void print_toekenning(
     cout << endl;
 }
 
-
+// Bepaal zo mogelijk het getal (0 <= getal <= 9)
+// dat nog niet is toegekend en groter is dan 'hoger_dan'.
+// Paramters: 'hoger_dan' en de huidige toekenning
 int volgend_getal(int toekenning[26], int hoger_dan) {
 
     // Alle tien getallen niet gebruikt.
@@ -162,6 +178,11 @@ bool vervang_toegekend(int toekenning[26], string sleutel) {
     throw std::invalid_argument("Kan toegekende karakters niet updaten");
 }
 
+// Bepaal de volgende mogelijke toekenning.
+// Parameters:
+// toekenning: de aan te passen toekenning
+// sleutel: de sleutel van de puzzel, zie het verslag voor een definitie
+// geldig: of de huidige (mogelijk gedeeltelijke) toekenning nog geldig is
 bool volgende_toekenning(int toekenning[26], string sleutel, bool geldig) {
 
     int slen = sleutel.length();
@@ -186,6 +207,14 @@ bool volgende_toekenning(int toekenning[26], string sleutel, bool geldig) {
     else return vervang_toegekend(toekenning, sleutel);
 }
 
+// Bepaalt of de huidige toekenning een oplossing is,
+// zo niet, dan bepaalt de functie of de (mogelijk gedeeltelijke0
+// toekenning nog wel geldig is.
+// Parameters: de puzzel woord0 + woord1 = woord2, en de bijbehorende
+// lengtes van de woorden
+// toekenning: de huidige toekenning
+// geldig: variabele gelijk te stellen aan de geldigheid
+// van de toekenning
 bool toekenning_is_oplossing(
         char const *woord0,
         char const *woord1,
@@ -235,9 +264,7 @@ bool toekenning_is_oplossing(
     }
 
     // Een 'carry' over de rand maakt de oplossing niet
-    // definitief ongeldig?
-    geldig = true;
-
+    // definitief ongeldig.
     // Maar zorgt er wel voor dat de oplossing incompleet is.
     oplossing = oplossing && carry == 0;
 
@@ -247,6 +274,9 @@ bool toekenning_is_oplossing(
     return oplossing && (geldig = !voorloop2);
 }
 
+// Zie opdracht. Vind de hoeveelheid oplossingen
+// behorende bij de puzzel woord0 + woord1 = woord2.
+// Andere parameters:
 // 'stop' dan wordt er gestopt als er meer dan een oplossing wordt gevonden.
 // De mogelijke resultaten zijn in dat geval dus 0, 1, 2
 int Lettersom::zoekoplossingen(char const *woord0,
@@ -302,6 +332,14 @@ int Lettersom::zoekoplossingen(char const *woord0,
     }
 }
 
+// Bepaal de karakters waaruit de oplossingen geconstrueerd moeten worden.
+// Hierbij wordt ook aangegeven in de array 'vrij_karakter' welk van de karakters
+// vrij zijn.
+// Parameters:
+// karakter_beschikbaar, vrij_karakter: de aan te passen arrays
+// woord0, woord1: de eerste twee woorden waaruit de puzzel bestaat
+// min_kars: de minimale lengte van het derde woord
+// max_kars: de maximale lengte van het derde woord
 void bepaal_beschikbare_karakters(
         bool karakter_beschikbaar[26],
         bool vrij_karakter[26],
@@ -341,11 +379,15 @@ void bepaal_beschikbare_karakters(
     }
 }
 
-// Na afloop is volgende gevuld op zo'n manier dat, om te weten te komen
+// Na afloop is 'volgende' gevuld op zo'n manier dat, om te weten te komen
 // welk beschikbare karakter na het beschikbare karakter 'C' komt, 'volgende'
 // geindexeerd kan worden volgende['C' - 'A']. 
 // Het beschikbare karakter na 'C' is dan dus volgende['C' - 'A'] + 'A'.
 // karakter_beschikbaar geeft aan welke karakters in het alfabet beschikbaar zijn.
+// Parameters:
+// karakter_beschikbaar: de beschikbare karakters voor het derde woord
+// volgende: de aan te passen array
+// eerste_kar: variabele gelijk te stellen aan het eerste karakter (0 <= eerste_kar < 26) 
 void construeer_volgende_tabel(bool karakter_beschikbaar[26], int volgende[26], int &eerste_kar) {
     memset(volgende, -1, sizeof(int)*26);
 
@@ -363,8 +405,14 @@ void construeer_volgende_tabel(bool karakter_beschikbaar[26], int volgende[26], 
     }
 }
 
+// Genereer het volgende woord dat mogelijk een unieke oplossing heeft.
 // Geef terug of er een volgend woord is gevonden, of dat dit niet
 // is gelukt.
+// Parameters:
+// derde_woord: aan te passen array gevuld met het huidige derde woord
+// eerste_kar: het eerst beschikbare karakter
+// volgende: zie commentaar boven 'construeer_volgende_tabel'
+// max: maximale lengte van het derde woord
 bool volgend_woord(char *derde_woord, int eerste_kar, int volgende[26], int max) {
 
     int len = strlen(derde_woord);
@@ -397,6 +445,9 @@ bool volgend_woord(char *derde_woord, int eerste_kar, int volgende[26], int max)
 // Hiervoor zorgen we door te checken dat:
 // * De vrije karakters in een vaste volgorde staan
 // * Er tussen de vrije karakters geen vrije karakters worden overgeslagen
+// Parameters:
+// derde_woord: het derde woord van de puzzel dat gecontroleerd moet worden
+// vrij_karakter: welke van de karakters vrij zijn (niet voorkomen in de eerste twee woorden)
 bool vrije_karakters_goede_volgorde(char const *derde_woord, bool vrij_karakter[26]) {
 
 	int huidig_vrij_karakter = -1;
@@ -425,6 +476,9 @@ bool vrije_karakters_goede_volgorde(char const *derde_woord, bool vrij_karakter[
 	return true;
 }
 
+// Zie opdracht. Retourneer de hoeveelheid puzzels waarbij een unieke
+// oplossing is te vinden.
+// Parameters: de woorden van de puzzel woord0 + woord1 = ...
 int Lettersom::construeerpuzzels(char const *woord0, char const *woord1) {
 
     if(!geldig_woord(woord0) || !geldig_woord(woord1)) {
