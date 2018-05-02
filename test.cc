@@ -164,7 +164,6 @@ void toekenning_is_oplossing_test() {
 	int toekenning[26];
 	bool geldig;
 
-    /*
 	char woord0[5] = "SINT";
 	char woord1[5] = "PIET";
 	char woord2[6] = "RUZIE";
@@ -279,8 +278,6 @@ void toekenning_is_oplossing_test() {
     assert(!toekenning_is_oplossing_len("ELF", "ELF", "AFAB", toekenning, geldig));
     assert(geldig);
  
-    */
-
     for(int i = 0; i < 26; i++)
 		toekenning[i] = -1;
     
