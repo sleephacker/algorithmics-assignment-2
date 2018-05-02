@@ -131,9 +131,13 @@ void zoek_oplossingen_test() {
         cout << "HEAD +  TOE = WAIST" << endl;
         cout << l.zoekoplossingen("HEAD", "TOE", "WAIST")  << " oplossingen" << endl;
         cout << "ELF +  ELF = FEE" << endl;
-        */
 
         cout << l.zoekoplossingen("ELF", "ELF", "FEE")  << " oplossingen" << endl;
+        */
+
+        cout << l.zoekoplossingen("ELF", "ELF", "AFAB")  << " oplossingen" << endl;
+//        cout << l.zoekoplossingen("ELF", "ELF", "FEE")  << " oplossingen" << endl;
+
 
 }
 
@@ -219,7 +223,42 @@ void toekenning_is_oplossing_test() {
 
     assert(!toekenning_is_oplossing("ELF", "ELF", "FEE", toekenning, geldig));
 	assert(geldig);
+
+    for(int i = 0; i < 26; i++)
+		toekenning[i] = -1;
+    
+    toekenning['F' - 'A'] = 6;
+    toekenning['B' - 'A'] = 2;
+    toekenning['L' - 'A'] = 0;
+    toekenning['A' - 'A'] = 1;
+    toekenning['E' - 'A'] = 8;
+
+    assert(toekenning_is_oplossing("ELF", "ELF", "AFAB", toekenning, geldig));
+
+    for(int i = 0; i < 26; i++)
+		toekenning[i] = -1;
+    
+    toekenning['F' - 'A'] = 8;
+    toekenning['B' - 'A'] = 6;
+    toekenning['L' - 'A'] = 0;
+    toekenning['A' - 'A'] = 1;
+    toekenning['E' - 'A'] = 9;
+
+    assert(toekenning_is_oplossing("ELF", "ELF", "AFAB", toekenning, geldig));
+
+    for(int i = 0; i < 26; i++)
+		toekenning[i] = -1;
+    
+    toekenning['F' - 'A'] = 6;
+    toekenning['B' - 'A'] = 2;
+    toekenning['L' - 'A'] = 0;
+    toekenning['A' - 'A'] = -1;
+    toekenning['E' - 'A'] = -1;
+
+    assert(toekenning_is_oplossing("ELF", "ELF", "AFAB", toekenning, geldig));
+
 }
+
 
 void vrije_karakters_goede_volgorde_test() {
 
