@@ -296,6 +296,12 @@ int Lettersom::zoekoplossingen(char const *woord0,
         return 0;
     }
 
+	string sleutel = bepaal_sleutel(woord0, woord1, woord2);
+	if(sleutel.length() > 10) {
+		cout << "De ingevoerde woorden bevatten meer dan 10 verschillende letters" << endl;
+		return 0;
+	}
+
 	int len0 = strlen(woord0), len1 = strlen(woord1), len2 = strlen(woord2);
 
 	if(len0 == 1 && len1 == 1 && len2 == 1) {
@@ -306,9 +312,6 @@ int Lettersom::zoekoplossingen(char const *woord0,
 		if(woord0[0] == woord2[0] && woord1[0] == woord2[0])
 			return 1;
 	}
-
-    // Zie implementatie.md
-    string sleutel = bepaal_sleutel(woord0, woord1, woord2);
 
     int oplossingen = 0;
     int toekenning[26];
@@ -487,7 +490,10 @@ int Lettersom::construeerpuzzels(char const *woord0, char const *woord1) {
         cout << "De ingevoerde woorden zijn ongeldig.. heeft u alleen hoofdletters gebruikt?" << endl;
         return 0;
     }
-
+	if(bepaal_sleutel(woord0, woord1, "").length() > 10) {
+		cout << "De ingevoerde woorden bevatten meer dan 10 verschillende letters" << endl;
+		return 0;
+	}
 	// Minimale groote van het derde woord
 	int min = max(strlen(woord0), strlen(woord1));
 	// Maximale grootte
